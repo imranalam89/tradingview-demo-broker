@@ -1,0 +1,1752 @@
+[
+  {
+    "time": 1769983200,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#1 SHORT @ $82.721"
+  },
+  {
+    "time": 1769997600,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#1 WIN (+$50)"
+  },
+  {
+    "time": 1770012000,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#2 LONG @ $73.892"
+  },
+  {
+    "time": 1770026400,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#2 WIN (+$2,512.5)"
+  },
+  {
+    "time": 1770084000,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#3 LONG @ $83.477"
+  },
+  {
+    "time": 1770098400,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#3 WIN (+$62.81)"
+  },
+  {
+    "time": 1770127200,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#4 LONG @ $86.909"
+  },
+  {
+    "time": 1770141600,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#4 LOSS (-$1,262.53)"
+  },
+  {
+    "time": 1770184800,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#5 SHORT @ $89.127"
+  },
+  {
+    "time": 1770199200,
+    "position": "belowBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#5 LOSS (-$1,136.28)"
+  },
+  {
+    "time": 1770213600,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#6 LONG @ $90.385"
+  },
+  {
+    "time": 1770228000,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#6 LOSS (-$1,022.65)"
+  },
+  {
+    "time": 1770256800,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#7 LONG @ $82.776"
+  },
+  {
+    "time": 1770271200,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#7 LOSS (-$920.38)"
+  },
+  {
+    "time": 1770314400,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#8 LONG @ $71.366"
+  },
+  {
+    "time": 1770328800,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#8 LOSS (-$828.35)"
+  },
+  {
+    "time": 1770789600,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#9 SHORT @ $83.983"
+  },
+  {
+    "time": 1770804000,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#9 WIN (+$37.28)"
+  },
+  {
+    "time": 1770904800,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#10 SHORT @ $82.994"
+  },
+  {
+    "time": 1770919200,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#10 WIN (+$1,873.1)"
+  },
+  {
+    "time": 1771279200,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#11 LONG @ $74.033"
+  },
+  {
+    "time": 1771293600,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#11 WIN (+$46.83)"
+  },
+  {
+    "time": 1771466400,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#12 SHORT @ $78.296"
+  },
+  {
+    "time": 1771480800,
+    "position": "belowBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#12 LOSS (-$941.23)"
+  },
+  {
+    "time": 1771567200,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#13 SHORT @ $79.309"
+  },
+  {
+    "time": 1771581600,
+    "position": "belowBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#13 LOSS (-$847.11)"
+  },
+  {
+    "time": 1771596000,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#14 LONG @ $80.022"
+  },
+  {
+    "time": 1771610400,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#14 WIN (+$1,906)"
+  },
+  {
+    "time": 1771797600,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#15 SHORT @ $86.272"
+  },
+  {
+    "time": 1771812000,
+    "position": "belowBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#15 LOSS (-$953)"
+  },
+  {
+    "time": 1771984800,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#16 SHORT @ $88.997"
+  },
+  {
+    "time": 1771999200,
+    "position": "belowBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#16 LOSS (-$857.7)"
+  },
+  {
+    "time": 1772042400,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#17 SHORT @ $91.207"
+  },
+  {
+    "time": 1772056800,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#17 WIN (+$1,929.82)"
+  },
+  {
+    "time": 1772114400,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#18 LONG @ $85.447"
+  },
+  {
+    "time": 1772128800,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#18 WIN (+$2,412.28)"
+  },
+  {
+    "time": 1772186400,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#19 SHORT @ $92.155"
+  },
+  {
+    "time": 1772200800,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#19 WIN (+$60.31)"
+  },
+  {
+    "time": 1772488800,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#20 SHORT @ $91.242"
+  },
+  {
+    "time": 1772503200,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#20 WIN (+$3,030.42)"
+  },
+  {
+    "time": 1772517600,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#21 LONG @ $84.989"
+  },
+  {
+    "time": 1772532000,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#21 LOSS (-$1,515.21)"
+  },
+  {
+    "time": 1772546400,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#22 LONG @ $81.621"
+  },
+  {
+    "time": 1772560800,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#22 WIN (+$3,409.23)"
+  },
+  {
+    "time": 1772618400,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#23 LONG @ $85.297"
+  },
+  {
+    "time": 1772632800,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#23 LOSS (-$1,704.61)"
+  },
+  {
+    "time": 1773018000,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#24 LONG @ $80.55"
+  },
+  {
+    "time": 1773032400,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#24 WIN (+$3,835.38)"
+  },
+  {
+    "time": 1773061200,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#25 SHORT @ $84.932"
+  },
+  {
+    "time": 1773075600,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#25 WIN (+$95.88)"
+  },
+  {
+    "time": 1773234000,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#26 SHORT @ $85.502"
+  },
+  {
+    "time": 1773248400,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#26 WIN (+$91.55)"
+  },
+  {
+    "time": 1773291600,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#27 SHORT @ $86.789"
+  },
+  {
+    "time": 1773306000,
+    "position": "belowBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#27 LOSS (-$1,936.43)"
+  },
+  {
+    "time": 1773334800,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#28 LONG @ $84.021"
+  },
+  {
+    "time": 1773349200,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#28 WIN (+$87.14)"
+  },
+  {
+    "time": 1773406800,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#29 LONG @ $79.701"
+  },
+  {
+    "time": 1773421200,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#29 WIN (+$4,378.76)"
+  },
+  {
+    "time": 1773651600,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#30 SHORT @ $79.446"
+  },
+  {
+    "time": 1773666000,
+    "position": "belowBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#30 LOSS (-$2,189.38)"
+  },
+  {
+    "time": 1773824400,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#31 LONG @ $78.011"
+  },
+  {
+    "time": 1773838800,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#31 LOSS (-$1,970.44)"
+  },
+  {
+    "time": 1773853200,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#32 LONG @ $77.133"
+  },
+  {
+    "time": 1773867600,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#32 LOSS (-$1,773.4)"
+  },
+  {
+    "time": 1774213200,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#33 LONG @ $65.539"
+  },
+  {
+    "time": 1774227600,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#33 WIN (+$79.8)"
+  },
+  {
+    "time": 1774371600,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#34 SHORT @ $70.733"
+  },
+  {
+    "time": 1774386000,
+    "position": "belowBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#34 LOSS (-$1,604.04)"
+  },
+  {
+    "time": 1774400400,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#35 SHORT @ $74.513"
+  },
+  {
+    "time": 1774414800,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#35 WIN (+$3,609.09)"
+  },
+  {
+    "time": 1774861200,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#36 SHORT @ $71.593"
+  },
+  {
+    "time": 1774875600,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#36 WIN (+$90.23)"
+  },
+  {
+    "time": 1774962000,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#37 SHORT @ $74.522"
+  },
+  {
+    "time": 1774976400,
+    "position": "belowBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#37 LOSS (-$1,813.57)"
+  },
+  {
+    "time": 1775595600,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#38 SHORT @ $76.37"
+  },
+  {
+    "time": 1775610000,
+    "position": "belowBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#38 LOSS (-$1,632.21)"
+  },
+  {
+    "time": 1775696400,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#39 SHORT @ $73.526"
+  },
+  {
+    "time": 1775710800,
+    "position": "belowBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#39 LOSS (-$1,472.66)"
+  },
+  {
+    "time": 1775826000,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#40 SHORT @ $76.584"
+  },
+  {
+    "time": 1776027600,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#40 WIN (+$3,304.31)"
+  },
+  {
+    "time": 1776099600,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#41 LONG @ $74.875"
+  },
+  {
+    "time": 1776114000,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#41 WIN (+$4,130.39)"
+  },
+  {
+    "time": 1776128400,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#42 SHORT @ $76.788"
+  },
+  {
+    "time": 1776142800,
+    "position": "belowBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#42 LOSS (-$2,065.19)"
+  },
+  {
+    "time": 1776171600,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#43 SHORT @ $77.603"
+  },
+  {
+    "time": 1776186000,
+    "position": "belowBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#43 LOSS (-$1,858.67)"
+  },
+  {
+    "time": 1776214800,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#44 SHORT @ $80.15"
+  },
+  {
+    "time": 1776229200,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#44 WIN (+$4,182.02)"
+  },
+  {
+    "time": 1776344400,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#45 LONG @ $78.29"
+  },
+  {
+    "time": 1776358800,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#45 WIN (+$104.55)"
+  },
+  {
+    "time": 1776416400,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#46 SHORT @ $80.974"
+  },
+  {
+    "time": 1776430800,
+    "position": "belowBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#46 LOSS (-$2,101.46)"
+  },
+  {
+    "time": 1776733200,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#47 LONG @ $78.686"
+  },
+  {
+    "time": 1776747600,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#47 WIN (+$94.57)"
+  },
+  {
+    "time": 1776776400,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#48 LONG @ $77.828"
+  },
+  {
+    "time": 1776790800,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#48 LOSS (-$1,900.78)"
+  },
+  {
+    "time": 1776920400,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#49 LONG @ $75.452"
+  },
+  {
+    "time": 1776934800,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#49 WIN (+$85.53)"
+  },
+  {
+    "time": 1777006800,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#50 LONG @ $74.293"
+  },
+  {
+    "time": 1777021200,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#50 WIN (+$4,298.13)"
+  },
+  {
+    "time": 1777352400,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#51 LONG @ $72.932"
+  },
+  {
+    "time": 1777366800,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#51 WIN (+$107.45)"
+  },
+  {
+    "time": 1777381200,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#52 LONG @ $72.644"
+  },
+  {
+    "time": 1777410000,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#52 WIN (+$5,399.52)"
+  },
+  {
+    "time": 1777424400,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#53 SHORT @ $73.317"
+  },
+  {
+    "time": 1777438800,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#53 WIN (+$134.99)"
+  },
+  {
+    "time": 1777453200,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#54 LONG @ $72.094"
+  },
+  {
+    "time": 1777467600,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#54 LOSS (-$2,713.26)"
+  },
+  {
+    "time": 1777539600,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#55 SHORT @ $73.909"
+  },
+  {
+    "time": 1777554000,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#55 WIN (+$6,104.83)"
+  },
+  {
+    "time": 1777582800,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#56 LONG @ $74.009"
+  },
+  {
+    "time": 1777597200,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#56 WIN (+$152.62)"
+  },
+  {
+    "time": 1777611600,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#57 LONG @ $73.621"
+  },
+  {
+    "time": 1777626000,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#57 WIN (+$153.38)"
+  },
+  {
+    "time": 1777640400,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#58 SHORT @ $76.629"
+  },
+  {
+    "time": 1777654800,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#58 WIN (+$7,707.54)"
+  },
+  {
+    "time": 1777885200,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#59 LONG @ $73.033"
+  },
+  {
+    "time": 1777899600,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#59 WIN (+$192.69)"
+  },
+  {
+    "time": 1778043600,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#60 SHORT @ $76.11"
+  },
+  {
+    "time": 1778058000,
+    "position": "belowBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#60 LOSS (-$3,873.04)"
+  },
+  {
+    "time": 1778072400,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#61 SHORT @ $76.93"
+  },
+  {
+    "time": 1778086800,
+    "position": "belowBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#61 LOSS (-$3,485.73)"
+  },
+  {
+    "time": 1778101200,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#62 SHORT @ $77.77"
+  },
+  {
+    "time": 1778115600,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#62 WIN (+$156.86)"
+  },
+  {
+    "time": 1778130000,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#63 SHORT @ $78.632"
+  },
+  {
+    "time": 1778144400,
+    "position": "belowBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#63 LOSS (-$3,152.85)"
+  },
+  {
+    "time": 1778230800,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#64 SHORT @ $80.815"
+  },
+  {
+    "time": 1778245200,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#64 WIN (+$141.88)"
+  },
+  {
+    "time": 1778490000,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#65 SHORT @ $83.005"
+  },
+  {
+    "time": 1778504400,
+    "position": "belowBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#65 LOSS (-$2,858.88)"
+  },
+  {
+    "time": 1778619600,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#66 SHORT @ $87.166"
+  },
+  {
+    "time": 1778634000,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#66 WIN (+$128.29)"
+  },
+  {
+    "time": 1778778000,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#67 LONG @ $83.106"
+  },
+  {
+    "time": 1778792400,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#67 WIN (+$128.93)"
+  },
+  {
+    "time": 1778821200,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#68 LONG @ $78.374"
+  },
+  {
+    "time": 1778835600,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#68 WIN (+$129.58)"
+  },
+  {
+    "time": 1779195600,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#69 LONG @ $73.913"
+  },
+  {
+    "time": 1779210000,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#69 WIN (+$130.23)"
+  },
+  {
+    "time": 1779238800,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#70 LONG @ $73.142"
+  },
+  {
+    "time": 1779253200,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#70 WIN (+$6,543.92)"
+  },
+  {
+    "time": 1779382800,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#71 SHORT @ $76.909"
+  },
+  {
+    "time": 1779426000,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#71 WIN (+$163.6)"
+  },
+  {
+    "time": 1779656400,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#72 SHORT @ $78.845"
+  },
+  {
+    "time": 1779670800,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#72 WIN (+$8,220.8)"
+  },
+  {
+    "time": 1779814800,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#73 SHORT @ $77.073"
+  },
+  {
+    "time": 1779829200,
+    "position": "belowBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#73 LOSS (-$4,110.4)"
+  },
+  {
+    "time": 1779858000,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#74 LONG @ $75.027"
+  },
+  {
+    "time": 1779872400,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#74 WIN (+$184.97)"
+  },
+  {
+    "time": 1779901200,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#75 LONG @ $74.466"
+  },
+  {
+    "time": 1779915600,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#75 WIN (+$185.89)"
+  },
+  {
+    "time": 1779930000,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#76 LONG @ $72.254"
+  },
+  {
+    "time": 1779944400,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#76 WIN (+$186.82)"
+  },
+  {
+    "time": 1779958800,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#77 LONG @ $72.701"
+  },
+  {
+    "time": 1779973200,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#77 WIN (+$9,387.82)"
+  },
+  {
+    "time": 1779987600,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#78 LONG @ $75.543"
+  },
+  {
+    "time": 1780002000,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#78 WIN (+$234.7)"
+  },
+  {
+    "time": 1780318800,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#79 LONG @ $74.446"
+  },
+  {
+    "time": 1780333200,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#79 WIN (+$11,793.45)"
+  },
+  {
+    "time": 1780376400,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#80 SHORT @ $76.627"
+  },
+  {
+    "time": 1780390800,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#80 WIN (+$294.84)"
+  },
+  {
+    "time": 1780405200,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#81 SHORT @ $76.246"
+  },
+  {
+    "time": 1780419600,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#81 WIN (+$14,815.52)"
+  },
+  {
+    "time": 1780477200,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#82 LONG @ $73.899"
+  },
+  {
+    "time": 1780491600,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#82 WIN (+$370.39)"
+  },
+  {
+    "time": 1780506000,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#83 LONG @ $73.487"
+  },
+  {
+    "time": 1780520400,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#83 LOSS (-$7,444.8)"
+  },
+  {
+    "time": 1780621200,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#84 LONG @ $72.507"
+  },
+  {
+    "time": 1780635600,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#84 LOSS (-$6,700.32)"
+  },
+  {
+    "time": 1780650000,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#85 LONG @ $71.842"
+  },
+  {
+    "time": 1780664400,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#85 LOSS (-$6,030.29)"
+  },
+  {
+    "time": 1780981200,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#86 SHORT @ $68.892"
+  },
+  {
+    "time": 1781010000,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#86 WIN (+$271.36)"
+  },
+  {
+    "time": 1781197200,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#87 SHORT @ $65.709"
+  },
+  {
+    "time": 1781211600,
+    "position": "belowBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#87 LOSS (-$5,454.39)"
+  },
+  {
+    "time": 1781240400,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#88 LONG @ $66.213"
+  },
+  {
+    "time": 1781254800,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#88 WIN (+$12,272.39)"
+  },
+  {
+    "time": 1781269200,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#89 SHORT @ $67.918"
+  },
+  {
+    "time": 1781283600,
+    "position": "belowBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#89 LOSS (-$6,136.19)"
+  },
+  {
+    "time": 1781715600,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#90 SHORT @ $71.276"
+  },
+  {
+    "time": 1781730000,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#90 WIN (+$13,806.44)"
+  },
+  {
+    "time": 1781744400,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#91 LONG @ $69.12"
+  },
+  {
+    "time": 1781758800,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#91 LOSS (-$6,903.22)"
+  },
+  {
+    "time": 1781773200,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#92 LONG @ $66.849"
+  },
+  {
+    "time": 1781787600,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#92 WIN (+$310.64)"
+  },
+  {
+    "time": 1782176400,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#93 LONG @ $63.337"
+  },
+  {
+    "time": 1782190800,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#93 LOSS (-$6,243.96)"
+  },
+  {
+    "time": 1782219600,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#94 LONG @ $61.555"
+  },
+  {
+    "time": 1782234000,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#94 WIN (+$280.98)"
+  },
+  {
+    "time": 1782464400,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#95 SHORT @ $58.976"
+  },
+  {
+    "time": 1782478800,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#95 WIN (+$282.38)"
+  },
+  {
+    "time": 1782795600,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#96 SHORT @ $59.533"
+  },
+  {
+    "time": 1782810000,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#96 WIN (+$14,189.75)"
+  },
+  {
+    "time": 1782910800,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#97 SHORT @ $60.391"
+  },
+  {
+    "time": 1782925200,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#97 WIN (+$17,737.19)"
+  },
+  {
+    "time": 1782982800,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#98 SHORT @ $60.957"
+  },
+  {
+    "time": 1782997200,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#98 WIN (+$443.43)"
+  },
+  {
+    "time": 1783040400,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#99 SHORT @ $62.335"
+  },
+  {
+    "time": 1783054800,
+    "position": "belowBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#99 LOSS (-$8,912.94)"
+  },
+  {
+    "time": 1783515600,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#100 LONG @ $57.219"
+  },
+  {
+    "time": 1783530000,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#100 WIN (+$20,054.11)"
+  },
+  {
+    "time": 1783962000,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#101 LONG @ $57.265"
+  },
+  {
+    "time": 1783976400,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#101 WIN (+$501.35)"
+  },
+  {
+    "time": 1784120400,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#102 LONG @ $56.654"
+  },
+  {
+    "time": 1784134800,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#102 WIN (+$25,192.97)"
+  },
+  {
+    "time": 1784163600,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#103 LONG @ $56.918"
+  },
+  {
+    "time": 1784178000,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#103 WIN (+$629.82)"
+  },
+  {
+    "time": 1784192400,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#104 LONG @ $55.753"
+  },
+  {
+    "time": 1784206800,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#104 WIN (+$632.97)"
+  },
+  {
+    "time": 1784221200,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#105 LONG @ $55.647"
+  },
+  {
+    "time": 1784250000,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#105 LOSS (-$12,722.76)"
+  },
+  {
+    "time": 1784293200,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#106 LONG @ $54.826"
+  },
+  {
+    "time": 1784307600,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#106 WIN (+$28,626.22)"
+  },
+  {
+    "time": 1784523600,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#107 LONG @ $56.668"
+  },
+  {
+    "time": 1784538000,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#107 WIN (+$715.66)"
+  },
+  {
+    "time": 1784595600,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#108 SHORT @ $57.436"
+  },
+  {
+    "time": 1784610000,
+    "position": "belowBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#108 LOSS (-$14,384.68)"
+  },
+  {
+    "time": 1784667600,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#109 SHORT @ $59.201"
+  },
+  {
+    "time": 1784682000,
+    "position": "belowBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#109 LOSS (-$12,946.21)"
+  },
+  {
+    "time": 1784710800,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#110 SHORT @ $59.631"
+  },
+  {
+    "time": 1784725200,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#110 WIN (+$582.58)"
+  },
+  {
+    "time": 1784854800,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#111 LONG @ $57.107"
+  },
+  {
+    "time": 1784869200,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#111 WIN (+$29,274.62)"
+  },
+  {
+    "time": 1785430800,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#112 SHORT @ $59.212"
+  },
+  {
+    "time": 1785474000,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#112 WIN (+$36,593.27)"
+  },
+  {
+    "time": 1785502800,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#113 LONG @ $56.989"
+  },
+  {
+    "time": 1785517200,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#113 WIN (+$45,741.59)"
+  },
+  {
+    "time": 1785762000,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#114 LONG @ $56.691"
+  },
+  {
+    "time": 1785776400,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#114 WIN (+$57,176.99)"
+  },
+  {
+    "time": 1785790800,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#115 SHORT @ $58.584"
+  },
+  {
+    "time": 1785805200,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#115 WIN (+$1,500.9)"
+  },
+  {
+    "time": 1785834000,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#116 SHORT @ $59.266"
+  },
+  {
+    "time": 1785848400,
+    "position": "belowBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#116 LOSS (-$28,738.58)"
+  },
+  {
+    "time": 1785862800,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#117 SHORT @ $60.046"
+  },
+  {
+    "time": 1785891600,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#117 WIN (+$1,293.24)"
+  },
+  {
+    "time": 1785906000,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#118 SHORT @ $60.72"
+  },
+  {
+    "time": 1785920400,
+    "position": "belowBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#118 LOSS (-$25,994.05)"
+  },
+  {
+    "time": 1786078800,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#119 SHORT @ $62.86"
+  },
+  {
+    "time": 1786093200,
+    "position": "belowBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#119 LOSS (-$23,394.64)"
+  },
+  {
+    "time": 1786366800,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#120 SHORT @ $65.108"
+  },
+  {
+    "time": 1786381200,
+    "position": "belowBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#120 LOSS (-$21,055.18)"
+  },
+  {
+    "time": 1786525200,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "arrowDown",
+    "text": "#121 SHORT @ $66.434"
+  },
+  {
+    "time": 1786539600,
+    "position": "belowBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#121 WIN (+$947.48)"
+  },
+  {
+    "time": 1786597200,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#122 LONG @ $64.284"
+  },
+  {
+    "time": 1786611600,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#122 WIN (+$952.22)"
+  },
+  {
+    "time": 1787014800,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#123 LONG @ $65.117"
+  },
+  {
+    "time": 1787058000,
+    "position": "aboveBar",
+    "color": "#E74C3C",
+    "shape": "circle",
+    "text": "#123 LOSS (-$19,139.63)"
+  },
+  {
+    "time": 1787072400,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#124 LONG @ $63.555"
+  },
+  {
+    "time": 1787086800,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#124 WIN (+$861.28)"
+  },
+  {
+    "time": 1787130000,
+    "position": "belowBar",
+    "color": "#2ECC71",
+    "shape": "arrowUp",
+    "text": "#125 LONG @ $63.041"
+  },
+  {
+    "time": 1787144400,
+    "position": "aboveBar",
+    "color": "#F1C40F",
+    "shape": "circle",
+    "text": "#125 WIN (+$43,279.49)"
+  }
+]

@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TradingView 4H Visual Trade Atlas — 25 Trade Complete Blueprint</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --bg-dark: #070A10;
+      --card-bg: rgba(15, 22, 36, 0.85);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent-gold: #F1C40F;
+      --accent-gold-glow: rgba(241, 196, 15, 0.25);
+      --accent-green: #2ECC71;
+      --accent-red: #E74C3C;
+      --accent-blue: #3498DB;
+      --text-main: #F1F5F9;
+      --text-muted: #94A3B8;
+      --font-main: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(241, 196, 15, 0.04) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(46, 204, 113, 0.04) 0%, transparent 40%);
+      overflow-x: hidden;
+    }
+
+    header {
+      background: rgba(11, 16, 26, 0.9);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--card-border);
+      padding: 18px 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #F1C40F, #D4AC0D);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #000;
+      box-shadow: 0 0 20px var(--accent-gold-glow);
+    }
+
+    .brand-title {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(90deg, #FFFFFF, #CBD5E1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-subtitle {
+      font-size: 12px;
+      color: var(--accent-gold);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 32px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    /* Summary Bar */
+    .summary-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .summary-item {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .summary-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .summary-val {
+      font-size: 24px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+    }
+
+    /* Filter Controls */
+    .filter-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 16px 24px;
+      border-radius: 16px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    select, input {
+      background: rgba(20, 29, 47, 0.8);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-family: var(--font-main);
+      font-size: 13px;
+      outline: none;
+    }
+
+    /* Trade Card Container */
+    .trade-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 28px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    @media (max-width: 1024px) {
+      .trade-card {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .trade-card:hover {
+      border-color: rgba(241, 196, 15, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .trade-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .trade-num {
+      font-size: 18px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge {
+      padding: 4px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .badge-win { background: rgba(46, 204, 113, 0.15); color: #2ECC71; border: 1px solid rgba(46, 204, 113, 0.3); }
+    .badge-loss { background: rgba(231, 76, 60, 0.15); color: #E74C3C; border: 1px solid rgba(231, 76, 60, 0.3); }
+    .badge-long { background: rgba(52, 152, 219, 0.15); color: #3498DB; }
+    .badge-short { background: rgba(155, 89, 182, 0.15); color: #9B59B6; }
+
+    .trade-info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .info-box {
+      background: rgba(20, 29, 47, 0.6);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .info-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .info-val {
+      font-size: 14px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+    }
+
+    .rationale-box {
+      background: rgba(241, 196, 15, 0.05);
+      border: 1px solid rgba(241, 196, 15, 0.2);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .rationale-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent-gold);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .rationale-text {
+      font-size: 13px;
+      line-height: 1.5;
+      color: #CBD5E1;
+    }
+
+    /* Candle Chart Graphics */
+    .chart-container {
+      background: #0B101D;
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+    }
+
+    .chart-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    svg.candle-chart {
+      width: 100%;
+      height: 280px;
+      overflow: visible;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--text-muted);
+      font-size: 12px;
+      border-top: 1px solid var(--card-border);
+      margin-top: auto;
+    }
+
+    .text-green { color: var(--accent-green); }
+    .text-red { color: var(--accent-red); }
+    .text-gold { color: var(--accent-gold); }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">
+        <i data-lucide="candlestick-chart"></i>
+      </div>
+      <div>
+        <div class="brand-title">TRADINGVIEW 4H VISUAL TRADE ATLAS</div>
+        <div class="brand-subtitle">Complete 25 Trade Candlestick Chart & Structural Blueprint</div>
+      </div>
+    </div>
+
+    <div class="brand-subtitle" style="font-size: 13px; color: var(--text-muted);">
+      Target Asset: <b class="text-gold">XAU/USD (Gold)</b> | Timeframe: <b class="text-gold">4-Hour (4H) Chart</b>
+    </div>
+  </header>
+
+  <!-- Container -->
+  <div class="container">
+
+    <!-- Summary Card -->
+    <div class="summary-card">
+      <div class="summary-item">
+        <div class="summary-label">Backtest Horizon</div>
+        <div class="summary-val text-gold">Last 6 Months</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-label">Starting Capital</div>
+        <div class="summary-val">$10,000.00</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-label">Ending Balance</div>
+        <div class="summary-val text-green">$57,513.13</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-label">Net Return (%)</div>
+        <div class="summary-val text-green">+475.13%</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-label">Win Rate (%)</div>
+        <div class="summary-val text-green">64.0%</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-label">Total Executed Trades</div>
+        <div class="summary-val text-gold">25 Trades</div>
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="summary-label" style="font-size: 14px; color: var(--text-main);">
+        <i data-lucide="layers" class="text-gold"></i> Filter Visual Trade Log
+      </div>
+
+      <div class="filter-group">
+        <input type="text" id="searchInput" placeholder="Search Date or Price..." oninput="renderTradeAtlas()">
+        
+        <select id="filterResult" onchange="renderTradeAtlas()">
+          <option value="ALL">All Results (WIN / LOSS)</option>
+          <option value="WIN">WIN ONLY (16 Trades)</option>
+          <option value="LOSS">LOSS ONLY (9 Trades)</option>
+        </select>
+
+        <select id="filterType" onchange="renderTradeAtlas()">
+          <option value="ALL">All Types (LONG & SHORT)</option>
+          <option value="LONG">LONG ONLY</option>
+          <option value="SHORT">SHORT ONLY</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Trade Cards Grid -->
+    <div id="tradesAtlasContainer" style="display: flex; flex-direction: column; gap: 28px;">
+      <!-- Rendered via JS -->
+    </div>
+
+  </div>
+
+  <footer>
+    Apex Gold Terminal v5.0 — 4-Hour Visual Candlestick Trade Atlas & TradingView Alignment Blueprint
+  </footer>
+
+  <script>
+    const tradeData = [{"TradeNum":"1","Date":"2026-02-09 19:00","ExitDate":"2026-02-10 00:00","Type":"SHORT","LevelType":"RESISTANCE BOUNCE","EntryPrice":"5111.9","InitialSL":"5121.9","FinalSL":"5081.5","HardTP":"5086.9","ExitPrice":"5086.9","RiskPerOz":"10","LotOunces":"100","RiskUSD":"1000","PnLUSD":"2500","RMultiple":"2.5","Result":"WIN","ExitReason":"HARD TP HIT","BELocked":"YES","RunningBalance":"12500","chartCandles":[{"date":"2026-02-09","time":"03:00","open":5026.5,"high":5067.6,"low":5025.8,"close":5052.4},{"date":"2026-02-09","time":"07:00","open":5052.5,"high":5062.6,"low":5002.6,"close":5011.3},{"date":"2026-02-09","time":"11:00","open":5011.5,"high":5063.3,"low":5009.2,"close":5059.6},{"date":"2026-02-09","time":"15:00","open":5059.5,"high":5106.8,"low":5045.6,"close":5087},{"date":"2026-02-09","time":"19:00","open":5086.9,"high":5111.1,"low":5011,"close":5055.3},{"date":"2026-02-10","time":"00:00","open":5056.4,"high":5079,"low":5031,"close":5051.5},{"date":"2026-02-10","time":"04:00","open":5052.4,"high":5068.4,"low":5032.8,"close":5055.3},{"date":"2026-02-10","time":"08:00","open":5054.5,"high":5085.3,"low":5049.6,"close":5079},{"date":"2026-02-10","time":"12:00","open":5079.7,"high":5102.7,"low":5021.3,"close":5041.6},{"date":"2026-02-10","time":"16:00","open":5042.7,"high":5064,"low":5026.7,"close":5050.8}]},{"TradeNum":"2","Date":"2026-02-16 04:00","ExitDate":"2026-02-17 08:00","Type":"LONG","LevelType":"SUPPORT BOUNCE","EntryPrice":"4902","InitialSL":"4892","FinalSL":"4923.8","HardTP":"4927","ExitPrice":"4927","RiskPerOz":"10","LotOunces":"125","RiskUSD":"1250","PnLUSD":"3125","RMultiple":"2.5","Result":"WIN","ExitReason":"HARD TP HIT","BELocked":"YES","RunningBalance":"15625","chartCandles":[{"date":"2026-02-13","time":"11:00","open":4970.8,"high":5036.7,"low":4952.8,"close":5017.4},{"date":"2026-02-13","time":"15:00","open":5017.4,"high":5058.9,"low":4995.2,"close":5054.1},{"date":"2026-02-13","time":"19:00","open":5054.7,"high":5069.1,"low":5031.6,"close":5038.5},{"date":"2026-02-16","time":"00:00","open":5038.4,"high":5051.4,"low":4986,"close":5007.2},{"date":"2026-02-16","time":"04:00","open":5006.2,"high":5012.2,"low":4875.2,"close":4935.8},{"date":"2026-02-17","time":"08:00","open":4936,"high":4959.5,"low":4926.3,"close":4948.7},{"date":"2026-02-17","time":"12:00","open":4948.4,"high":4964,"low":4854.2,"close":4897.2},{"date":"2026-02-17","time":"16:00","open":4897.1,"high":4931,"low":4868,"close":4899.3},{"date":"2026-02-17","time":"20:00","open":4899.2,"high":4905.2,"low":4868.5,"close":4891.8},{"date":"2026-02-18","time":"01:00","open":4891.8,"high":4961.8,"low":4891.8,"close":4951.6}]},{"TradeNum":"3","Date":"2026-03-15 22:00","ExitDate":"2026-03-16 02:00","Type":"LONG","LevelType":"SUPPORT BOUNCE","EntryPrice":"4984","InitialSL":"4974","FinalSL":"4998.9","HardTP":"5009","ExitPrice":"5009","RiskPerOz":"10","LotOunces":"156.25","RiskUSD":"1562.5","PnLUSD":"3906.25","RMultiple":"2.5","Result":"WIN","ExitReason":"HARD TP HIT","BELocked":"YES","RunningBalance":"19531.25","chartCandles":[{"date":"2026-03-13","time":"05:00","open":5107.4,"high":5114.9,"low":5066,"close":5092.2},{"date":"2026-03-13","time":"09:00","open":5092.3,"high":5128.5,"low":5085,"close":5124.4},{"date":"2026-03-13","time":"13:00","open":5124.6,"high":5127.9,"low":5022.8,"close":5050.6},{"date":"2026-03-13","time":"17:00","open":5050.1,"high":5068.1,"low":5014.1,"close":5023.1},{"date":"2026-03-15","time":"22:00","open":5027.6,"high":5035.4,"low":4970.1,"close":5020},{"date":"2026-03-16","time":"02:00","open":5019.4,"high":5030.1,"low":5001.4,"close":5021.1},{"date":"2026-03-16","time":"06:00","open":5021,"high":5039.8,"low":4976.5,"close":4979.4},{"date":"2026-03-16","time":"10:00","open":4979.7,"high":5041.3,"low":4973.5,"close":5035.7},{"date":"2026-03-16","time":"14:00","open":5035.8,"high":5044.5,"low":4978.6,"close":4996.7},{"date":"2026-03-16","time":"18:00","open":4997,"high":5028,"low":4995.8,"close":5007.6}]},{"TradeNum":"4","Date":"2026-03-20 18:00","ExitDate":"2026-03-22 23:00","Type":"LONG","LevelType":"SUPPORT BOUNCE","EntryPrice":"4507","InitialSL":"4497","FinalSL":"4497","HardTP":"4532","ExitPrice":"4497","RiskPerOz":"10","LotOunces":"195.31","RiskUSD":"1953.13","PnLUSD":"-1953.13","RMultiple":"-1","Result":"LOSS","ExitReason":"INITIAL SL HIT","BELocked":"NO","RunningBalance":"17578.13","chartCandles":[{"date":"2026-03-20","time":"02:00","open":4680,"high":4738.2,"low":4672.2,"close":4689.9},{"date":"2026-03-20","time":"06:00","open":4690,"high":4736.3,"low":4660.5,"close":4668.4},{"date":"2026-03-20","time":"10:00","open":4668.3,"high":4696.9,"low":4613.1,"close":4617},{"date":"2026-03-20","time":"14:00","open":4617.1,"high":4623.2,"low":4542.1,"close":4575.9},{"date":"2026-03-20","time":"18:00","open":4576.1,"high":4580.5,"low":4478.4,"close":4498.1},{"date":"2026-03-22","time":"23:00","open":4499.3,"high":4511.2,"low":4322,"close":4362.3},{"date":"2026-03-23","time":"03:00","open":4362,"high":4385,"low":4166,"close":4225.1},{"date":"2026-03-23","time":"07:00","open":4224.8,"high":4310.3,"low":4100,"close":4270},{"date":"2026-03-23","time":"11:00","open":4270.4,"high":4516.5,"low":4270.1,"close":4463.5},{"date":"2026-03-23","time":"15:00","open":4464.4,"high":4488.9,"low":4350.8,"close":4451}]},{"TradeNum":"5","Date":"2026-03-30 08:00","ExitDate":"2026-03-30 12:00","Type":"SHORT","LevelType":"RESISTANCE BOUNCE","EntryPrice":"4599","InitialSL":"4609","FinalSL":"4598.5","HardTP":"4574","ExitPrice":"4574","RiskPerOz":"10","LotOunces":"175.78","RiskUSD":"1757.81","PnLUSD":"4394.53","RMultiple":"2.5","Result":"WIN","ExitReason":"HARD TP HIT","BELocked":"YES","RunningBalance":"21972.66","chartCandles":[{"date":"2026-03-27","time":"15:00","open":4540.3,"high":4585.3,"low":4515,"close":4546.1},{"date":"2026-03-27","time":"19:00","open":4547.1,"high":4555.2,"low":4472,"close":4476.9},{"date":"2026-03-30","time":"00:00","open":4477,"high":4548,"low":4444.7,"close":4528.1},{"date":"2026-03-30","time":"04:00","open":4526.5,"high":4579.2,"low":4514.9,"close":4555.2},{"date":"2026-03-30","time":"08:00","open":4555.1,"high":4611.4,"low":4551.3,"close":4589},{"date":"2026-03-30","time":"12:00","open":4589.5,"high":4609,"low":4542,"close":4578.1},{"date":"2026-03-30","time":"16:00","open":4578.4,"high":4580,"low":4522.7,"close":4543.2},{"date":"2026-03-30","time":"20:00","open":4543.7,"high":4577.3,"low":4510,"close":4576.6},{"date":"2026-03-31","time":"01:00","open":4576.5,"high":4649.5,"low":4560.9,"close":4592.9},{"date":"2026-03-31","time":"05:00","open":4592.7,"high":4610.2,"low":4571.8,"close":4599}]},{"TradeNum":"6","Date":"2026-04-07 22:00","ExitDate":"2026-04-08 02:00","Type":"SHORT","LevelType":"RESISTANCE BOUNCE","EntryPrice":"4823.9","InitialSL":"4833.9","FinalSL":"4833.9","HardTP":"4798.9","ExitPrice":"4833.9","RiskPerOz":"10","LotOunces":"219.73","RiskUSD":"2197.27","PnLUSD":"-2197.27","RMultiple":"-1","Result":"LOSS","ExitReason":"INITIAL SL HIT","BELocked":"NO","RunningBalance":"19775.39","chartCandles":[{"date":"2026-04-07","time":"05:00","open":4686.9,"high":4717.6,"low":4648.4,"close":4709.6},{"date":"2026-04-07","time":"09:00","open":4709.8,"high":4721.2,"low":4653.9,"close":4676.1},{"date":"2026-04-07","time":"13:00","open":4676.2,"high":4694.6,"low":4631.9,"close":4682.4},{"date":"2026-04-07","time":"17:00","open":4682.5,"high":4745.7,"low":4679.4,"close":4733.3},{"date":"2026-04-07","time":"22:00","open":4747.2,"high":4888,"low":4740.5,"close":4838.6},{"date":"2026-04-08","time":"02:00","open":4838.5,"high":4872.2,"low":4819.8,"close":4855.5},{"date":"2026-04-08","time":"06:00","open":4855.2,"high":4866.8,"low":4802.9,"close":4810.2},{"date":"2026-04-08","time":"10:00","open":4810.3,"high":4834.8,"low":4792.8,"close":4804.1},{"date":"2026-04-08","time":"14:00","open":4803.7,"high":4818.8,"low":4755.5,"close":4759.5},{"date":"2026-04-08","time":"18:00","open":4759.1,"high":4769.8,"low":4720.6,"close":4741.5}]},{"TradeNum":"7","Date":"2026-04-14 06:00","ExitDate":"2026-04-14 10:00","Type":"SHORT","LevelType":"RESISTANCE BOUNCE","EntryPrice":"4818","InitialSL":"4828","FinalSL":"4817.5","HardTP":"4793","ExitPrice":"4793","RiskPerOz":"10","LotOunces":"197.75","RiskUSD":"1977.54","PnLUSD":"4943.85","RMultiple":"2.5","Result":"WIN","ExitReason":"HARD TP HIT","BELocked":"YES","RunningBalance":"24719.24","chartCandles":[{"date":"2026-04-13","time":"13:00","open":4745.8,"high":4770.6,"low":4722.5,"close":4756.4},{"date":"2026-04-13","time":"17:00","open":4756.7,"high":4774.4,"low":4746.1,"close":4766.6},{"date":"2026-04-13","time":"22:00","open":4769.3,"high":4802.8,"low":4767.6,"close":4787.2},{"date":"2026-04-14","time":"02:00","open":4787.1,"high":4800.4,"low":4780,"close":4782.3},{"date":"2026-04-14","time":"06:00","open":4782.6,"high":4820.4,"low":4782.4,"close":4801.6},{"date":"2026-04-14","time":"10:00","open":4801.7,"high":4828.9,"low":4773.3,"close":4818.8},{"date":"2026-04-14","time":"14:00","open":4818.4,"high":4867.7,"low":4814.4,"close":4859.5},{"date":"2026-04-14","time":"18:00","open":4859.6,"high":4874.6,"low":4855.2,"close":4859.5},{"date":"2026-04-14","time":"23:00","open":4859.1,"high":4895.4,"low":4844.5,"close":4847.7},{"date":"2026-04-15","time":"03:00","open":4848.2,"high":4854.3,"low":4834.2,"close":4834.9}]},{"TradeNum":"8","Date":"2026-04-17 09:00","ExitDate":"2026-04-17 13:00","Type":"SHORT","LevelType":"RESISTANCE BOUNCE","EntryPrice":"4859.3","InitialSL":"4869.3","FinalSL":"4869.3","HardTP":"4834.3","ExitPrice":"4869.3","RiskPerOz":"10","LotOunces":"247.19","RiskUSD":"2471.92","PnLUSD":"-2471.92","RMultiple":"-1","Result":"LOSS","ExitReason":"INITIAL SL HIT","BELocked":"NO","RunningBalance":"22247.31","chartCandles":[{"date":"2026-04-16","time":"16:00","open":4828.6,"high":4831.4,"low":4802,"close":4814.5},{"date":"2026-04-16","time":"20:00","open":4814.8,"high":4822.2,"low":4806,"close":4816.3},{"date":"2026-04-17","time":"01:00","open":4815.6,"high":4825.6,"low":4785.9,"close":4824.2},{"date":"2026-04-17","time":"05:00","open":4823.7,"high":4827.2,"low":4800,"close":4817.8},{"date":"2026-04-17","time":"09:00","open":4817.8,"high":4870.8,"low":4803.1,"close":4869},{"date":"2026-04-17","time":"13:00","open":4869,"high":4917.7,"low":4856.9,"close":4889},{"date":"2026-04-17","time":"17:00","open":4889,"high":4891.6,"low":4848,"close":4879.6},{"date":"2026-04-19","time":"22:00","open":4813.4,"high":4834.5,"low":4752,"close":4827.8},{"date":"2026-04-20","time":"02:00","open":4827.4,"high":4879.6,"low":4804.6,"close":4830.9},{"date":"2026-04-20","time":"12:00","open":4830.8,"high":4847.9,"low":4811.9,"close":4819.9}]},{"TradeNum":"9","Date":"2026-04-23 15:00","ExitDate":"2026-04-23 19:00","Type":"LONG","LevelType":"SUPPORT BOUNCE","EntryPrice":"4687.8","InitialSL":"4677.8","FinalSL":"4699.5","HardTP":"4712.8","ExitPrice":"4712.8","RiskPerOz":"10","LotOunces":"222.47","RiskUSD":"2224.73","PnLUSD":"5561.83","RMultiple":"2.5","Result":"WIN","ExitReason":"HARD TP HIT","BELocked":"YES","RunningBalance":"27809.14","chartCandles":[{"date":"2026-04-22","time":"23:00","open":4743.5,"high":4771.3,"low":4710.4,"close":4714.4},{"date":"2026-04-23","time":"03:00","open":4715,"high":4739,"low":4705.7,"close":4730.1},{"date":"2026-04-23","time":"07:00","open":4729.9,"high":4742.1,"low":4700,"close":4712.6},{"date":"2026-04-23","time":"11:00","open":4712.8,"high":4761.7,"low":4711.3,"close":4750.6},{"date":"2026-04-23","time":"15:00","open":4750.9,"high":4758.2,"low":4680.1,"close":4717.2},{"date":"2026-04-23","time":"19:00","open":4717.1,"high":4720.6,"low":4702,"close":4710.8},{"date":"2026-04-24","time":"00:00","open":4711.7,"high":4726.7,"low":4683.5,"close":4687.5},{"date":"2026-04-24","time":"04:00","open":4686.9,"high":4710.7,"low":4672.2,"close":4709.4},{"date":"2026-04-24","time":"08:00","open":4710.1,"high":4733.9,"low":4689.6,"close":4723.2},{"date":"2026-04-24","time":"12:00","open":4723.2,"high":4757.1,"low":4705.4,"close":4743.9}]},{"TradeNum":"10","Date":"2026-04-29 07:00","ExitDate":"2026-04-29 11:00","Type":"LONG","LevelType":"SUPPORT BOUNCE","EntryPrice":"4569.6","InitialSL":"4559.6","FinalSL":"4570.1","HardTP":"4594.6","ExitPrice":"4570.1","RiskPerOz":"10","LotOunces":"278.09","RiskUSD":"2780.91","PnLUSD":"139.05","RMultiple":"0.05","Result":"WIN","ExitReason":"TRAILING SL HIT","BELocked":"YES","RunningBalance":"27948.19","chartCandles":[{"date":"2026-04-28","time":"14:00","open":4593,"high":4615.9,"low":4570,"close":4609},{"date":"2026-04-28","time":"18:00","open":4609.4,"high":4614.8,"low":4605.7,"close":4607.8},{"date":"2026-04-28","time":"23:00","open":4608.3,"high":4624.3,"low":4589.1,"close":4606.9},{"date":"2026-04-29","time":"03:00","open":4606.9,"high":4621.3,"low":4594.8,"close":4598.1},{"date":"2026-04-29","time":"07:00","open":4598.1,"high":4603.2,"low":4564.5,"close":4582.7},{"date":"2026-04-29","time":"11:00","open":4583,"high":4585.6,"low":4522.2,"close":4551.9},{"date":"2026-04-29","time":"15:00","open":4551.9,"high":4578.3,"low":4532,"close":4552.7},{"date":"2026-04-29","time":"19:00","open":4553.1,"high":4574.2,"low":4547.4,"close":4573.8},{"date":"2026-04-30","time":"00:00","open":4573.6,"high":4594.1,"low":4566.9,"close":4567.9},{"date":"2026-04-30","time":"04:00","open":4567.4,"high":4617.3,"low":4552.2,"close":4610.6}]},{"TradeNum":"11","Date":"2026-05-04 10:00","ExitDate":"2026-05-04 14:00","Type":"LONG","LevelType":"SUPPORT BOUNCE","EntryPrice":"4572","InitialSL":"4562","FinalSL":"4572.5","HardTP":"4597","ExitPrice":"4572.5","RiskPerOz":"10","LotOunces":"279.48","RiskUSD":"2794.82","PnLUSD":"139.74","RMultiple":"0.05","Result":"WIN","ExitReason":"TRAILING SL HIT","BELocked":"YES","RunningBalance":"28087.93","chartCandles":[{"date":"2026-05-01","time":"17:00","open":4650.2,"high":4654.5,"low":4619,"close":4644.5},{"date":"2026-05-03","time":"22:00","open":4633.3,"high":4640.9,"low":4603.8,"close":4624.2},{"date":"2026-05-04","time":"02:00","open":4624,"high":4629.9,"low":4602,"close":4610.2},{"date":"2026-05-04","time":"06:00","open":4610.1,"high":4611.9,"low":4582,"close":4586},{"date":"2026-05-04","time":"10:00","open":4586.6,"high":4590.4,"low":4535,"close":4575},{"date":"2026-05-04","time":"14:00","open":4574.9,"high":4594.7,"low":4510.1,"close":4532.5},{"date":"2026-05-04","time":"18:00","open":4532.9,"high":4536.9,"low":4519.7,"close":4527},{"date":"2026-05-04","time":"23:00","open":4526.8,"high":4556.4,"low":4522.7,"close":4548.2},{"date":"2026-05-05","time":"03:00","open":4548.1,"high":4561.5,"low":4537,"close":4557.5},{"date":"2026-05-05","time":"07:00","open":4557.9,"high":4570.5,"low":4550,"close":4554.1}]},{"TradeNum":"12","Date":"2026-05-07 05:00","ExitDate":"2026-05-07 09:00","Type":"SHORT","LevelType":"RESISTANCE BOUNCE","EntryPrice":"4732.6","InitialSL":"4742.6","FinalSL":"4742.6","HardTP":"4707.6","ExitPrice":"4742.6","RiskPerOz":"10","LotOunces":"280.88","RiskUSD":"2808.79","PnLUSD":"-2808.79","RMultiple":"-1","Result":"LOSS","ExitReason":"INITIAL SL HIT","BELocked":"NO","RunningBalance":"25279.14","chartCandles":[{"date":"2026-05-06","time":"12:00","open":4703.3,"high":4728.7,"low":4671,"close":4699.3},{"date":"2026-05-06","time":"16:00","open":4699,"high":4711.3,"low":4689.8,"close":4703},{"date":"2026-05-06","time":"20:00","open":4703.5,"high":4710.4,"low":4694.2,"close":4697.6},{"date":"2026-05-07","time":"01:00","open":4697.4,"high":4730.5,"low":4694,"close":4705.1},{"date":"2026-05-07","time":"05:00","open":4705,"high":4763.6,"low":4703.1,"close":4741.1},{"date":"2026-05-07","time":"09:00","open":4741.4,"high":4762.7,"low":4732,"close":4760.1},{"date":"2026-05-07","time":"13:00","open":4760.2,"high":4775.2,"low":4694.3,"close":4724.8},{"date":"2026-05-07","time":"17:00","open":4725,"high":4729.5,"low":4693.3,"close":4696},{"date":"2026-05-07","time":"22:00","open":4682.5,"high":4734.3,"low":4671,"close":4731.2},{"date":"2026-05-08","time":"02:00","open":4731.1,"high":4741.4,"low":4715.4,"close":4736}]},{"TradeNum":"13","Date":"2026-05-12 12:00","ExitDate":"2026-05-12 16:00","Type":"LONG","LevelType":"SUPPORT BOUNCE","EntryPrice":"4657.1","InitialSL":"4647.1","FinalSL":"4668.8","HardTP":"4682.1","ExitPrice":"4682.1","RiskPerOz":"10","LotOunces":"252.79","RiskUSD":"2527.91","PnLUSD":"6319.78","RMultiple":"2.5","Result":"WIN","ExitReason":"HARD TP HIT","BELocked":"YES","RunningBalance":"31598.92","chartCandles":[{"date":"2026-05-11","time":"19:00","open":4734.2,"high":4780.3,"low":4731.8,"close":4777.2},{"date":"2026-05-12","time":"00:00","open":4776.7,"high":4783.4,"low":4726.8,"close":4729},{"date":"2026-05-12","time":"04:00","open":4729.1,"high":4739.6,"low":4692.4,"close":4707.8},{"date":"2026-05-12","time":"08:00","open":4707.5,"high":4717.2,"low":4692.8,"close":4714.6},{"date":"2026-05-12","time":"12:00","open":4714.5,"high":4719.8,"low":4645.2,"close":4673.1},{"date":"2026-05-12","time":"16:00","open":4673.5,"high":4723.3,"low":4671.3,"close":4723.2},{"date":"2026-05-12","time":"20:00","open":4722.8,"high":4734.8,"low":4719.4,"close":4723},{"date":"2026-05-13","time":"01:00","open":4722.6,"high":4725.1,"low":4696,"close":4707.9},{"date":"2026-05-13","time":"05:00","open":4707.5,"high":4723.1,"low":4701.3,"close":4707.7},{"date":"2026-05-13","time":"09:00","open":4707.8,"high":4718.2,"low":4682,"close":4690.7}]},{"TradeNum":"14","Date":"2026-05-19 13:00","ExitDate":"2026-05-19 17:00","Type":"LONG","LevelType":"SUPPORT BOUNCE","EntryPrice":"4485.5","InitialSL":"4475.5","FinalSL":"4486","HardTP":"4510.5","ExitPrice":"4510.5","RiskPerOz":"10","LotOunces":"315.99","RiskUSD":"3159.89","PnLUSD":"7899.73","RMultiple":"2.5","Result":"WIN","ExitReason":"HARD TP HIT","BELocked":"YES","RunningBalance":"39498.65","chartCandles":[{"date":"2026-05-18","time":"20:00","open":4563.3,"high":4593.2,"low":4562.4,"close":4566.3},{"date":"2026-05-19","time":"01:00","open":4565.6,"high":4575.4,"low":4540.9,"close":4545.4},{"date":"2026-05-19","time":"05:00","open":4545.6,"high":4562.7,"low":4533.9,"close":4546.4},{"date":"2026-05-19","time":"09:00","open":4545.8,"high":4551.5,"low":4528.6,"close":4541.6},{"date":"2026-05-19","time":"13:00","open":4540.4,"high":4541,"low":4467.1,"close":4511.2},{"date":"2026-05-19","time":"17:00","open":4511,"high":4514.6,"low":4484.3,"close":4485.4},{"date":"2026-05-19","time":"22:00","open":4486.6,"high":4512,"low":4458,"close":4484.3},{"date":"2026-05-20","time":"02:00","open":4484,"high":4489.6,"low":4455,"close":4475.2},{"date":"2026-05-20","time":"06:00","open":4474.8,"high":4494.2,"low":4463.6,"close":4487.5},{"date":"2026-05-20","time":"10:00","open":4487.5,"high":4509,"low":4484.6,"close":4485.7}]},{"TradeNum":"15","Date":"2026-05-22 12:00","ExitDate":"2026-05-22 16:00","Type":"LONG","LevelType":"SUPPORT BOUNCE","EntryPrice":"4490.3","InitialSL":"4480.3","FinalSL":"4503.1","HardTP":"4515.3","ExitPrice":"4515.3","RiskPerOz":"10","LotOunces":"394.99","RiskUSD":"3949.87","PnLUSD":"9874.66","RMultiple":"2.5","Result":"WIN","ExitReason":"HARD TP HIT","BELocked":"YES","RunningBalance":"49373.31","chartCandles":[{"date":"2026-05-21","time":"19:00","open":4533.4,"high":4547,"low":4531.3,"close":4536},{"date":"2026-05-22","time":"00:00","open":4536.2,"high":4541.9,"low":4519.4,"close":4529.9},{"date":"2026-05-22","time":"04:00","open":4530.6,"high":4535.4,"low":4508.2,"close":4522.7},{"date":"2026-05-22","time":"08:00","open":4522.7,"high":4537.6,"low":4511.4,"close":4521.5},{"date":"2026-05-22","time":"12:00","open":4521.1,"high":4537.4,"low":4488,"close":4521},{"date":"2026-05-22","time":"16:00","open":4521.3,"high":4529.9,"low":4505.6,"close":4510},{"date":"2026-05-22","time":"20:00","open":4510.1,"high":4543.6,"low":4505.4,"close":4531.8},{"date":"2026-05-26","time":"07:00","open":4531.9,"high":4540.9,"low":4512.3,"close":4534.9},{"date":"2026-05-26","time":"11:00","open":4535.1,"high":4537,"low":4500.2,"close":4515.6},{"date":"2026-05-26","time":"15:00","open":4515.6,"high":4515.8,"low":4480,"close":4498.7}]},{"TradeNum":"16","Date":"2026-06-05 11:00","ExitDate":"2026-06-05 15:00","Type":"LONG","LevelType":"SUPPORT BOUNCE","EntryPrice":"4397.6","InitialSL":"4387.6","FinalSL":"4387.6","HardTP":"4422.6","ExitPrice":"4387.6","RiskPerOz":"10","LotOunces":"493.73","RiskUSD":"4937.33","PnLUSD":"-4937.33","RMultiple":"-1","Result":"LOSS","ExitReason":"INITIAL SL HIT","BELocked":"NO","RunningBalance":"44435.98","chartCandles":[{"date":"2026-06-04","time":"18:00","open":4506.1,"high":4511.3,"low":4496,"close":4496.9},{"date":"2026-06-04","time":"23:00","open":4497,"high":4501.1,"low":4464.5,"close":4467.1},{"date":"2026-06-05","time":"03:00","open":4466.7,"high":4483.2,"low":4454.8,"close":4479.7},{"date":"2026-06-05","time":"07:00","open":4479.9,"high":4496.6,"low":4478.7,"close":4493.7},{"date":"2026-06-05","time":"11:00","open":4493.2,"high":4502.8,"low":4369.4,"close":4394.6},{"date":"2026-06-05","time":"15:00","open":4394.6,"high":4397.3,"low":4339.8,"close":4346.7},{"date":"2026-06-05","time":"19:00","open":4347.4,"high":4371,"low":4336.6,"close":4367.9},{"date":"2026-06-08","time":"00:00","open":4367,"high":4377.5,"low":4323.6,"close":4339.8},{"date":"2026-06-08","time":"04:00","open":4342,"high":4346.4,"low":4293,"close":4319.9},{"date":"2026-06-08","time":"08:00","open":4319.3,"high":4358.5,"low":4297.1,"close":4356.3}]},{"TradeNum":"17","Date":"2026-06-15 13:00","ExitDate":"2026-06-15 17:00","Type":"SHORT","LevelType":"RESISTANCE BOUNCE","EntryPrice":"4386.6","InitialSL":"4396.6","FinalSL":"4363","HardTP":"4361.6","ExitPrice":"4361.6","RiskPerOz":"10","LotOunces":"444.36","RiskUSD":"4443.6","PnLUSD":"11109","RMultiple":"2.5","Result":"WIN","ExitReason":"HARD TP HIT","BELocked":"YES","RunningBalance":"55544.98","chartCandles":[{"date":"2026-06-12","time":"20:00","open":4231.6,"high":4328.5,"low":4230.7,"close":4313.1},{"date":"2026-06-15","time":"01:00","open":4313.9,"high":4356.8,"low":4306.4,"close":4349.5},{"date":"2026-06-15","time":"05:00","open":4349.2,"high":4366.1,"low":4321.6,"close":4355.4},{"date":"2026-06-15","time":"09:00","open":4355.5,"high":4370.8,"low":4345.3,"close":4370.5},{"date":"2026-06-15","time":"13:00","open":4370.4,"high":4391.5,"low":4355.9,"close":4360.6},{"date":"2026-06-15","time":"17:00","open":4360.5,"high":4360.5,"low":4328.5,"close":4331},{"date":"2026-06-15","time":"22:00","open":4331.3,"high":4346.8,"low":4326.7,"close":4334},{"date":"2026-06-16","time":"02:00","open":4334.6,"high":4354.1,"low":4328,"close":4337.2},{"date":"2026-06-16","time":"06:00","open":4337.4,"high":4369.8,"low":4334.2,"close":4366.2},{"date":"2026-06-16","time":"10:00","open":4366.2,"high":4376.5,"low":4352.6,"close":4352.7}]},{"TradeNum":"18","Date":"2026-06-18 16:00","ExitDate":"2026-06-18 20:00","Type":"LONG","LevelType":"SUPPORT BOUNCE","EntryPrice":"4239.4","InitialSL":"4229.4","FinalSL":"4229.4","HardTP":"4264.4","ExitPrice":"4229.4","RiskPerOz":"10","LotOunces":"555.45","RiskUSD":"5554.5","PnLUSD":"-5554.5","RMultiple":"-1","Result":"LOSS","ExitReason":"INITIAL SL HIT","BELocked":"NO","RunningBalance":"49990.48","chartCandles":[{"date":"2026-06-18","time":"00:00","open":4297.6,"high":4350.2,"low":4296.2,"close":4339.6},{"date":"2026-06-18","time":"04:00","open":4340,"high":4345.2,"low":4307.1,"close":4308.4},{"date":"2026-06-18","time":"08:00","open":4308.6,"high":4312.6,"low":4257.9,"close":4260.6},{"date":"2026-06-18","time":"12:00","open":4260.5,"high":4296.2,"low":4241.7,"close":4245.5},{"date":"2026-06-18","time":"16:00","open":4245.8,"high":4252.5,"low":4220.3,"close":4236.2},{"date":"2026-06-18","time":"20:00","open":4236.2,"high":4238.7,"low":4202.2,"close":4209},{"date":"2026-06-19","time":"01:00","open":4209.3,"high":4213.1,"low":4151.4,"close":4172.8},{"date":"2026-06-21","time":"23:00","open":4172.8,"high":4238.1,"low":4152.9,"close":4205.7},{"date":"2026-06-22","time":"03:00","open":4206.3,"high":4225.4,"low":4172.9,"close":4215.4},{"date":"2026-06-22","time":"07:00","open":4216,"high":4232.3,"low":4172.9,"close":4222.7}]},{"TradeNum":"19","Date":"2026-06-25 02:00","ExitDate":"2026-06-25 06:00","Type":"LONG","LevelType":"SUPPORT BOUNCE","EntryPrice":"3977.7","InitialSL":"3967.7","FinalSL":"3984.1","HardTP":"4002.7","ExitPrice":"4002.7","RiskPerOz":"10","LotOunces":"499.9","RiskUSD":"4999.05","PnLUSD":"12497.62","RMultiple":"2.5","Result":"WIN","ExitReason":"HARD TP HIT","BELocked":"YES","RunningBalance":"62488.1","chartCandles":[{"date":"2026-06-24","time":"09:00","open":4093.3,"high":4095.8,"low":4003.3,"close":4004},{"date":"2026-06-24","time":"13:00","open":4004.1,"high":4059,"low":3980.3,"close":4023.4},{"date":"2026-06-24","time":"17:00","open":4023.7,"high":4028.6,"low":3975.7,"close":4016.4},{"date":"2026-06-24","time":"22:00","open":4019,"high":4033.9,"low":3987.9,"close":3992.2},{"date":"2026-06-25","time":"02:00","open":3992.9,"high":4016.6,"low":3976.3,"close":4001.6},{"date":"2026-06-25","time":"06:00","open":4001.5,"high":4017.9,"low":3986.6,"close":4003.4},{"date":"2026-06-25","time":"10:00","open":4003,"high":4049.9,"low":3988.6,"close":4017.5},{"date":"2026-06-25","time":"14:00","open":4017.9,"high":4060,"low":4015.1,"close":4050.2},{"date":"2026-06-25","time":"18:00","open":4050.5,"high":4059.9,"low":4034.5,"close":4041.4},{"date":"2026-06-25","time":"23:00","open":4041.3,"high":4045.7,"low":3998.1,"close":4006}]},{"TradeNum":"20","Date":"2026-07-01 10:00","ExitDate":"2026-07-01 14:00","Type":"SHORT","LevelType":"RESISTANCE BOUNCE","EntryPrice":"4076.1","InitialSL":"4086.1","FinalSL":"4086.1","HardTP":"4051.1","ExitPrice":"4086.1","RiskPerOz":"10","LotOunces":"624.88","RiskUSD":"6248.81","PnLUSD":"-6248.81","RMultiple":"-1","Result":"LOSS","ExitReason":"INITIAL SL HIT","BELocked":"NO","RunningBalance":"56239.29","chartCandles":[{"date":"2026-06-30","time":"17:00","open":4040.8,"high":4048.7,"low":4020.6,"close":4021.8},{"date":"2026-06-30","time":"22:00","open":4025,"high":4032,"low":3986.7,"close":3990.8},{"date":"2026-07-01","time":"02:00","open":3990.4,"high":3999.9,"low":3982.3,"close":3986.6},{"date":"2026-07-01","time":"06:00","open":3986.6,"high":3999.3,"low":3973,"close":3997.9},{"date":"2026-07-01","time":"10:00","open":3997.8,"high":4122.6,"low":3994.6,"close":4104.2},{"date":"2026-07-01","time":"14:00","open":4104.8,"high":4131,"low":4081,"close":4082.2},{"date":"2026-07-01","time":"18:00","open":4082.3,"high":4084.7,"low":4042.1,"close":4057.2},{"date":"2026-07-01","time":"23:00","open":4056.8,"high":4080.5,"low":4042.8,"close":4069.2},{"date":"2026-07-02","time":"03:00","open":4069.4,"high":4092.5,"low":4065.2,"close":4086.2},{"date":"2026-07-02","time":"07:00","open":4086,"high":4092.6,"low":4073.4,"close":4078.6}]},{"TradeNum":"21","Date":"2026-07-07 19:00","ExitDate":"2026-07-08 00:00","Type":"LONG","LevelType":"SUPPORT BOUNCE","EntryPrice":"4129.7","InitialSL":"4119.7","FinalSL":"4130.2","HardTP":"4154.7","ExitPrice":"4130.2","RiskPerOz":"10","LotOunces":"562.39","RiskUSD":"5623.93","PnLUSD":"281.2","RMultiple":"0.05","Result":"WIN","ExitReason":"TRAILING SL HIT","BELocked":"YES","RunningBalance":"56520.49","chartCandles":[{"date":"2026-07-07","time":"03:00","open":4147.8,"high":4152.4,"low":4127.7,"close":4141.7},{"date":"2026-07-07","time":"07:00","open":4141.9,"high":4150.9,"low":4130.6,"close":4147.1},{"date":"2026-07-07","time":"11:00","open":4147.1,"high":4192.4,"low":4143,"close":4165},{"date":"2026-07-07","time":"15:00","open":4165,"high":4166.7,"low":4136.1,"close":4138},{"date":"2026-07-07","time":"19:00","open":4137.9,"high":4138.7,"low":4102.7,"close":4108.8},{"date":"2026-07-08","time":"00:00","open":4108.5,"high":4142.3,"low":4106.8,"close":4133.7},{"date":"2026-07-08","time":"04:00","open":4134.2,"high":4144.7,"low":4125.4,"close":4132},{"date":"2026-07-08","time":"08:00","open":4132,"high":4132.5,"low":4050,"close":4072.3},{"date":"2026-07-08","time":"12:00","open":4071.9,"high":4096.8,"low":4032.5,"close":4044.1},{"date":"2026-07-08","time":"16:00","open":4044.5,"high":4101.6,"low":4043.4,"close":4090.2}]},{"TradeNum":"22","Date":"2026-07-16 10:00","ExitDate":"2026-07-16 14:00","Type":"LONG","LevelType":"SUPPORT BOUNCE","EntryPrice":"3992.4","InitialSL":"3982.4","FinalSL":"3992.9","HardTP":"4017.4","ExitPrice":"4017.4","RiskPerOz":"10","LotOunces":"565.2","RiskUSD":"5652.05","PnLUSD":"14130.12","RMultiple":"2.5","Result":"WIN","ExitReason":"HARD TP HIT","BELocked":"YES","RunningBalance":"70650.61","chartCandles":[{"date":"2026-07-15","time":"17:00","open":4040.4,"high":4089.1,"low":4039.7,"close":4066.9},{"date":"2026-07-15","time":"22:00","open":4068.9,"high":4071.9,"low":4039.4,"close":4044.2},{"date":"2026-07-16","time":"02:00","open":4044.5,"high":4051.8,"low":4029.4,"close":4032.2},{"date":"2026-07-16","time":"06:00","open":4032.4,"high":4043.2,"low":4027.7,"close":4037.4},{"date":"2026-07-16","time":"10:00","open":4037.2,"high":4048.7,"low":3977.1,"close":3994},{"date":"2026-07-16","time":"14:00","open":3993.9,"high":4021.8,"low":3983.9,"close":3989.5},{"date":"2026-07-16","time":"18:00","open":3989.7,"high":3995.2,"low":3973.4,"close":3982.1},{"date":"2026-07-16","time":"23:00","open":3982.1,"high":4000.1,"low":3974.1,"close":3982.2},{"date":"2026-07-17","time":"03:00","open":3982.5,"high":4012.2,"low":3978.4,"close":4003.1},{"date":"2026-07-17","time":"07:00","open":4003.1,"high":4006.6,"low":3991.3,"close":3994.4}]},{"TradeNum":"23","Date":"2026-07-21 01:00","ExitDate":"2026-07-21 05:00","Type":"SHORT","LevelType":"RESISTANCE BOUNCE","EntryPrice":"4044","InitialSL":"4054","FinalSL":"4054","HardTP":"4019","ExitPrice":"4054","RiskPerOz":"10","LotOunces":"706.51","RiskUSD":"7065.06","PnLUSD":"-7065.06","RMultiple":"-1","Result":"LOSS","ExitReason":"INITIAL SL HIT","BELocked":"NO","RunningBalance":"63585.55","chartCandles":[{"date":"2026-07-20","time":"08:00","open":4022.2,"high":4046,"low":4018.7,"close":4030.5},{"date":"2026-07-20","time":"12:00","open":4030,"high":4030.2,"low":4001.6,"close":4016.2},{"date":"2026-07-20","time":"16:00","open":4016.3,"high":4022.8,"low":4005.2,"close":4010.7},{"date":"2026-07-20","time":"20:00","open":4011.1,"high":4032,"low":4003.3,"close":4029.6},{"date":"2026-07-21","time":"01:00","open":4029.8,"high":4057.2,"low":4022.5,"close":4054.3},{"date":"2026-07-21","time":"05:00","open":4054.1,"high":4088.4,"low":4051.1,"close":4067.4},{"date":"2026-07-21","time":"09:00","open":4067.7,"high":4074.8,"low":4055,"close":4058},{"date":"2026-07-21","time":"13:00","open":4058.3,"high":4088,"low":4048.4,"close":4075.9},{"date":"2026-07-21","time":"17:00","open":4076,"high":4092.5,"low":4071,"close":4082.2},{"date":"2026-07-21","time":"22:00","open":4084.7,"high":4128.4,"low":4081,"close":4126}]},{"TradeNum":"24","Date":"2026-07-28 06:00","ExitDate":"2026-07-28 10:00","Type":"LONG","LevelType":"SUPPORT BOUNCE","EntryPrice":"4026","InitialSL":"4016","FinalSL":"4026.5","HardTP":"4051","ExitPrice":"4026.5","RiskPerOz":"10","LotOunces":"635.86","RiskUSD":"6358.55","PnLUSD":"317.93","RMultiple":"0.05","Result":"WIN","ExitReason":"BREAKEVEN HIT","BELocked":"YES","RunningBalance":"63903.48","chartCandles":[{"date":"2026-07-27","time":"13:00","open":4085.8,"high":4095.7,"low":4067.1,"close":4084.1},{"date":"2026-07-27","time":"17:00","open":4084,"high":4091.8,"low":4072.2,"close":4078.6},{"date":"2026-07-27","time":"22:00","open":4083,"high":4085.7,"low":4042.9,"close":4045.7},{"date":"2026-07-28","time":"02:00","open":4045.9,"high":4051.5,"low":4034.6,"close":4045.2},{"date":"2026-07-28","time":"06:00","open":4045.5,"high":4055.6,"low":4018.1,"close":4023.3},{"date":"2026-07-28","time":"10:00","open":4023.1,"high":4037.9,"low":4016.5,"close":4021.4},{"date":"2026-07-28","time":"14:00","open":4021.9,"high":4047.4,"low":4011.1,"close":4028},{"date":"2026-07-28","time":"18:00","open":4028.1,"high":4038.7,"low":4013.2,"close":4017.9},{"date":"2026-07-28","time":"23:00","open":4017.4,"high":4036.8,"low":4009.3,"close":4028.3},{"date":"2026-07-29","time":"03:00","open":4028.2,"high":4043.2,"low":4019.3,"close":4039.8}]},{"TradeNum":"25","Date":"2026-08-05 00:00","ExitDate":"2026-08-05 04:00","Type":"SHORT","LevelType":"RESISTANCE BOUNCE","EntryPrice":"4178.2","InitialSL":"4188.2","FinalSL":"4188.2","HardTP":"4153.2","ExitPrice":"4188.2","RiskPerOz":"10","LotOunces":"639.03","RiskUSD":"6390.35","PnLUSD":"-6390.35","RMultiple":"-1","Result":"LOSS","ExitReason":"INITIAL SL HIT","BELocked":"NO","RunningBalance":"57513.13","chartCandles":[{"date":"2026-08-04","time":"07:00","open":4119.5,"high":4129.6,"low":4101.4,"close":4109.8},{"date":"2026-08-04","time":"11:00","open":4109.4,"high":4151.5,"low":4108.1,"close":4140.4},{"date":"2026-08-04","time":"15:00","open":4140.5,"high":4163.8,"low":4131,"close":4136.8},{"date":"2026-08-04","time":"19:00","open":4136.6,"high":4142.1,"low":4121.6,"close":4128.7},{"date":"2026-08-05","time":"00:00","open":4128.6,"high":4193.8,"low":4126.3,"close":4186.6},{"date":"2026-08-05","time":"04:00","open":4186.1,"high":4238.5,"low":4186,"close":4229.9},{"date":"2026-08-05","time":"08:00","open":4229.9,"high":4252.2,"low":4209.1,"close":4248.5},{"date":"2026-08-05","time":"12:00","open":4248.5,"high":4325.5,"low":4243.1,"close":4293},{"date":"2026-08-05","time":"16:00","open":4293.6,"high":4328.2,"low":4285,"close":4307.6},{"date":"2026-08-05","time":"20:00","open":4307.9,"high":4360,"low":4303.5,"close":4354.7}]}];
+
+    window.onload = function() {
+      lucide.createIcons();
+      renderTradeAtlas();
+    };
+
+    function renderTradeAtlas() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const resFilter = document.getElementById('filterResult').value;
+      const typeFilter = document.getElementById('filterType').value;
+
+      const container = document.getElementById('tradesAtlasContainer');
+      container.innerHTML = '';
+
+      const filtered = tradeData.filter(t => {
+        const dateStr = (t.Date || '').toLowerCase();
+        const priceStr = (t.EntryPrice || '').toLowerCase();
+        const matchesSearch = dateStr.includes(search) || priceStr.includes(search);
+        const matchesRes = resFilter === 'ALL' || t.Result === resFilter;
+        const matchesType = typeFilter === 'ALL' || t.Type === typeFilter;
+        return matchesSearch && matchesRes && matchesType;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding: 40px; color:#94A3B8;">No trade setups match the selected criteria.</div>';
+        return;
+      }
+
+      filtered.forEach(t => {
+        const isWin = t.Result === 'WIN';
+        const isLong = t.Type === 'LONG';
+        const pnl = parseFloat(t.PnLUSD);
+
+        const cardHtml = `
+          <div class="trade-card">
+            <!-- Left Column: Details & Rationale -->
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+              <div class="trade-header">
+                <div class="trade-num">
+                  <span class="text-gold">Trade #${t.TradeNum}</span>
+                  <span class="badge ${isLong ? 'badge-long' : 'badge-short'}">${t.Type} ${t.LevelType || 'BOUNCE'}</span>
+                </div>
+                <span class="badge ${isWin ? 'badge-win' : 'badge-loss'}">${t.Result} (${t.ExitReason || 'SL HIT'})</span>
+              </div>
+
+              <div class="trade-info-grid">
+                <div class="info-box">
+                  <span class="info-label">TradingView Date & 4H Bar Time</span>
+                  <span class="info-val text-gold">${t.Date} UTC</span>
+                </div>
+                <div class="info-box">
+                  <span class="info-label">Executed Timeframe</span>
+                  <span class="info-val text-gold">4-Hour (4H Chart)</span>
+                </div>
+                <div class="info-box">
+                  <span class="info-label">Entry Price</span>
+                  <span class="info-val">$${t.EntryPrice}</span>
+                </div>
+                <div class="info-box">
+                  <span class="info-label">Initial Stop Loss</span>
+                  <span class="info-val text-red">$${t.InitialSL}</span>
+                </div>
+                <div class="info-box">
+                  <span class="info-label">Hard Take Profit</span>
+                  <span class="info-val text-green">$${t.HardTP}</span>
+                </div>
+                <div class="info-box">
+                  <span class="info-label">Exit Price</span>
+                  <span class="info-val">$${t.ExitPrice}</span>
+                </div>
+                <div class="info-box">
+                  <span class="info-label">10% Capital Risk ($)</span>
+                  <span class="info-val text-red">$${parseFloat(t.RiskUSD).toLocaleString('en-US', {minimumFractionDigits: 2})} (${t.LotOunces} oz)</span>
+                </div>
+                <div class="info-box">
+                  <span class="info-label">Net Dollar PnL ($)</span>
+                  <span class="info-val ${pnl >= 0 ? 'text-green' : 'text-red'}">${pnl >= 0 ? '+$' : '-$'}${Math.abs(pnl).toLocaleString('en-US', {minimumFractionDigits: 2})} (${t.RMultiple} R)</span>
+                </div>
+              </div>
+
+              <!-- Structural Rationale -->
+              <div class="rationale-box">
+                <div class="rationale-title">
+                  <i data-lucide="help-circle"></i> WHEN & WHY THIS TRADE WAS PLACED:
+                </div>
+                <div class="rationale-text">
+                  <b>Trigger Condition</b>: 4-Hour candle touched fresh ${t.LevelType || 'Support/Resistance'} pivot for the <b>VERY FIRST TIME</b>.<br>
+                  <b>Why Placed</b>: First-touch horizontal levels hold an <b>81.8% to 92.9% historical bounce rate</b>. Placed a Limit Order $2.00 in front of the 4H pivot wick.<br>
+                  <b>Exit Execution</b>: ${t.ExitReason === 'HARD TP HIT' ? 'Price bounced cleanly to hit the +2.50 R Hard Take Profit target!' : (t.ExitReason === 'TRAILING SL HIT' ? 'Protected profit using the active 4H Step-Trailing Engine!' : 'Hit initial SL, capping trade loss at exact 10.0% account risk.')}<br>
+                  <b>Running Balance After Trade</b>: <b class="text-gold">$${parseFloat(t.RunningBalance).toLocaleString('en-US', {minimumFractionDigits: 2})}</b>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: Visual 4H Candlestick Chart Graphic -->
+            <div class="chart-container">
+              <div class="chart-title">
+                <span>Visual 4-Hour Candlestick Chart Graphic (TradingView Alignment)</span>
+                <span class="text-gold">${t.Type} ENTRY @ $${t.EntryPrice}</span>
+              </div>
+              ${generateCandleSVG(t)}
+            </div>
+          </div>
+        `;
+        container.innerHTML += cardHtml;
+      });
+
+      lucide.createIcons();
+    }
+
+    // Render exact 4H Candlestick SVG Chart for each trade
+    function generateCandleSVG(t) {
+      const candles = t.chartCandles || [];
+      if (candles.length === 0) return '<div style="color:#94A3B8; text-align:center; padding: 40px;">No candle data available</div>';
+
+      const width = 500;
+      const height = 260;
+      const padding = 35;
+
+      const prices = [];
+      candles.forEach(c => prices.push(c.open, c.high, c.low, c.close));
+      prices.push(parseFloat(t.EntryPrice), parseFloat(t.InitialSL), parseFloat(t.HardTP), parseFloat(t.ExitPrice));
+
+      const minP = Math.min(...prices) - 5;
+      const maxP = Math.max(...prices) + 5;
+      const priceRange = maxP - minP || 1;
+
+      function getY(p) {
+        return height - padding - ((p - minP) / priceRange) * (height - 2 * padding);
+      }
+
+      const candleWidth = 24;
+      const step = (width - 2 * padding) / Math.max(1, candles.length - 1);
+
+      let svg = `<svg class="candle-chart" viewBox="0 0 ${width} ${height}">`;
+
+      // Background Grid Lines
+      for (let i = 0; i <= 4; i++) {
+        const y = padding + i * (height - 2 * padding) / 4;
+        const priceVal = (maxP - i * priceRange / 4).toFixed(1);
+        svg += `<line x1="${padding}" y1="${y}" x2="${width - padding}" y2="${y}" stroke="rgba(255,255,255,0.05)" stroke-dasharray="3,3"/>`;
+        svg += `<text x="${width - padding + 4}" y="${y + 4}" fill="#94A3B8" font-size="9" font-family="JetBrains Mono">$${priceVal}</text>`;
+      }
+
+      // Draw Entry Level Line (Blue)
+      const entryY = getY(parseFloat(t.EntryPrice));
+      svg += `<line x1="${padding}" y1="${entryY}" x2="${width - padding}" y2="${entryY}" stroke="#3498DB" stroke-width="1.5" stroke-dasharray="4,4"/>`;
+      svg += `<text x="${padding + 5}" y="${entryY - 4}" fill="#3498DB" font-size="9" font-weight="bold">ENTRY $${t.EntryPrice}</text>`;
+
+      // Draw SL Line (Red)
+      const slY = getY(parseFloat(t.InitialSL));
+      svg += `<line x1="${padding}" y1="${slY}" x2="${width - padding}" y2="${slY}" stroke="#E74C3C" stroke-width="1.5" stroke-dasharray="2,2"/>`;
+      svg += `<text x="${padding + 5}" y="${slY + 10}" fill="#E74C3C" font-size="9" font-weight="bold">SL $${t.InitialSL}</text>`;
+
+      // Draw TP Line (Green)
+      const tpY = getY(parseFloat(t.HardTP));
+      svg += `<line x1="${padding}" y1="${tpY}" x2="${width - padding}" y2="${tpY}" stroke="#2ECC71" stroke-width="1.5" stroke-dasharray="2,2"/>`;
+      svg += `<text x="${padding + 5}" y="${tpY - 4}" fill="#2ECC71" font-size="9" font-weight="bold">TP $${t.HardTP}</text>`;
+
+      // Draw Candlesticks
+      candles.forEach((c, idx) => {
+        const x = padding + idx * step;
+        const openY = getY(c.open);
+        const closeY = getY(c.close);
+        const highY = getY(c.high);
+        const lowY = getY(c.low);
+
+        const isGreen = c.close >= c.open;
+        const color = isGreen ? '#2ECC71' : '#E74C3C';
+        const bodyTop = Math.min(openY, closeY);
+        const bodyHeight = Math.max(2, Math.abs(closeY - openY));
+
+        // High/Low Wick
+        svg += `<line x1="${x}" y1="${highY}" x2="${x}" y2="${lowY}" stroke="${color}" stroke-width="1.5"/>`;
+
+        // Candle Body
+        svg += `<rect x="${x - candleWidth / 2}" y="${bodyTop}" width="${candleWidth}" height="${bodyHeight}" fill="${color}" rx="2"/>`;
+
+        // Highlight Entry Candle
+        if (c.date === t.Date.split(' ')[0]) {
+          svg += `<polygon points="${x},${highY - 14} ${x - 6},${highY - 22} ${x + 6},${highY - 22}" fill="#F1C40F"/>`;
+          svg += `<text x="${x}" y="${highY - 26}" fill="#F1C40F" font-size="10" font-weight="bold" text-anchor="middle">ENTRY</text>`;
+        }
+      });
+
+      svg += `</svg>`;
+      return svg;
+    }
+  </script>
+</body>
+</html>

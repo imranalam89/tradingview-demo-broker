@@ -1,0 +1,20 @@
+{
+  "strategyName": "Apex Gold 1H Trend & Dynamic Trailing Engine",
+  "dataset": "12 Months (5693 Candles)",
+  "initialCapital": 10000,
+  "finalBalance": 7703.47,
+  "netProfitUSD": -2296.53,
+  "returnPct": -22.97,
+  "totalTrades": 157,
+  "winningTrades": 33,
+  "losingTrades": 79,
+  "breakEvenTrades": 45,
+  "winRatePct": 21.02,
+  "profitFactor": 0.85,
+  "grossProfitUSD": 13776.68,
+  "grossLossUSD": 16214.61,
+  "maxDrawdownUSD": 5462.07,
+  "maxDrawdownPct": 43.39,
+  "avgWinUSD": 417.48,
+  "avgLossUSD": 205.25
+}

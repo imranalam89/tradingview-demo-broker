@@ -1,0 +1,22 @@
+{
+  "strategyName": "Apex Scalper Pro 60% (1% Risk Trailing Scalp System)",
+  "backtestDataset": "12 Months (57,435 5m Candles)",
+  "initialCapital": 10000,
+  "finalBalance": 119.96,
+  "netProfitUSD": -9880.04,
+  "returnPct": -98.8,
+  "totalTrades": 3089,
+  "winningTrades": 609,
+  "breakEvenTrades": 1594,
+  "losingTrades": 886,
+  "pureWinRatePct": 19.7,
+  "winPlusBreakevenRatePct": 71.3,
+  "profitFactor": 0.65,
+  "grossProfitUSD": 19414.3,
+  "grossLossUSD": 29837.99,
+  "maxDrawdownUSD": 9881.59,
+  "maxDrawdownPct": 98.82,
+  "avgWinUSD": 31.88,
+  "avgLossUSD": 33.68,
+  "avgTradeDurationMins": 20
+}

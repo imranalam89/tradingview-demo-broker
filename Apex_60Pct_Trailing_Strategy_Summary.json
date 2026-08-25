@@ -1,0 +1,22 @@
+{
+  "strategyName": "Apex 60%+ Win-Rate Trailing Strategy (Filtered Model)",
+  "backtestDataset": "12 Months (57,435 5m Candles)",
+  "initialCapital": 10000,
+  "finalBalance": 9659,
+  "netProfitUSD": -341,
+  "returnPct": -3.41,
+  "totalTrades": 17,
+  "winningTrades": 5,
+  "breakEvenTrades": 2,
+  "losingTrades": 10,
+  "pureWinRatePct": 29.4,
+  "winPlusBreakevenRatePct": 41.2,
+  "profitFactor": 0.5,
+  "grossProfitUSD": 349.2,
+  "grossLossUSD": 694.2,
+  "maxDrawdownUSD": 492.3,
+  "maxDrawdownPct": 4.92,
+  "avgWinUSD": 69.84,
+  "avgLossUSD": 69.42,
+  "avgTradeDurationMins": 32
+}

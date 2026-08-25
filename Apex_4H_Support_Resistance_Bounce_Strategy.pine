@@ -1,0 +1,190 @@
+//@version=5
+strategy("Apex 4H S/R Bounce (Forced 4H Engine)", 
+         shorttitle="Apex_4H_Forced", 
+         overlay=true, 
+         initial_capital=10000, 
+         default_qty_type=strategy.percent_of_equity, 
+         default_qty_value=10, 
+         commission_type=strategy.commission.percent, 
+         commission_value=0.04, 
+         slippage=1,
+         pyramiding=0)
+
+// =============================================================================
+// 1. HARDCODED 4H MULTI-TIMEFRAME ENGINE
+// =============================================================================
+// Hardcoded to 4H (240 mins) so it NEVER executes 5m micro-scalps!
+var string TF_4H = "240"
+
+// Pivot Settings
+leftBars    = input.int(3, "4H Pivot Left Strength", minval=1)
+rightBars   = input.int(3, "4H Pivot Right Strength", minval=1)
+maxAgeBars  = input.int(100, "Max Age of Level (4H Bars)", minval=10)
+
+// Stop Loss Mode: Auto-Scales for BTC, Gold, Forex, or Any Asset
+slPercent   = input.float(1.5, "Stop Loss (% of Price)", minval=0.1, step=0.1, tooltip="Auto-adjusts for Bitcoin (1.5% = ~$1,150 SL), Gold (1.5% = ~$36 SL), etc.")
+rewardMult  = input.float(2.5, "Risk-to-Reward Ratio (e.g. 2.5 = 1:2.5 R:R)", minval=0.5, step=0.1)
+
+// Trailing Settings
+useTrailingBE = input.bool(true, "Enable Step-Trailing to Breakeven at +1.0R")
+trailTriggerR = input.float(1.0, "Move SL to BE at Profit (+1.0R)")
+lockProfitR   = input.float(0.05, "Profit Locked at BE (+0.05R)")
+
+// Date Filter
+startYear  = input.int(2025, "Start Year")
+startMonth = input.int(1, "Start Month")
+startDay   = input.int(1, "Start Day")
+endYear    = input.int(2026, "End Year")
+endMonth   = input.int(12, "End Month")
+endDay     = input.int(31, "End Day")
+
+inDateRange = (time >= timestamp(syminfo.timezone, startYear, startMonth, startDay, 0, 0)) and 
+              (time <= timestamp(syminfo.timezone, endYear, endMonth, endDay, 23, 59))
+
+// =============================================================================
+// 2. FETCH REAL 4-HOUR PIVOT DATA (NO MATTER WHAT TIMEFRAME YOU ARE ON)
+// =============================================================================
+pHigh_4h = request.security(syminfo.tickerid, TF_4H, ta.pivothigh(high, leftBars, rightBars)[1], lookahead=barmerge.lookahead_off)
+pLow_4h  = request.security(syminfo.tickerid, TF_4H, ta.pivotlow(low, leftBars, rightBars)[1], lookahead=barmerge.lookahead_off)
+atr_4h   = request.security(syminfo.tickerid, TF_4H, ta.atr(14)[1], lookahead=barmerge.lookahead_off)
+
+float currentSLDist = close * (slPercent / 100.0)
+float currentTPDist = currentSLDist * rewardMult
+float touchTolerance = na(atr_4h) ? (close * 0.002) : (atr_4h * 0.25)
+
+type Pivot4H
+    float price
+    int   timeDetected
+    bool  isResistance
+    bool  touched
+    line  ln
+
+var Pivot4H[] pivots = array.new<Pivot4H>()
+
+// Register New 4H Resistance
+var float lastPH = na
+if not na(pHigh_4h) and (na(lastPH) or pHigh_4h != lastPH)
+    lastPH := pHigh_4h
+    line l = line.new(x1=time, y1=pHigh_4h, x2=time + 86400000, y2=pHigh_4h, xloc=xloc.bar_time, color=color.new(color.red, 30), width=2)
+    array.push(pivots, Pivot4H.new(pHigh_4h, time, true, false, l))
+
+// Register New 4H Support
+var float lastPL = na
+if not na(pLow_4h) and (na(lastPL) or pLow_4h != lastPL)
+    lastPL := pLow_4h
+    line l = line.new(x1=time, y1=pLow_4h, x2=time + 86400000, y2=pLow_4h, xloc=xloc.bar_time, color=color.new(color.green, 30), width=2)
+    array.push(pivots, Pivot4H.new(pLow_4h, time, false, false, l))
+
+// Extend active lines
+if array.size(pivots) > 0
+    for i = 0 to array.size(pivots) - 1
+        Pivot4H p = array.get(pivots, i)
+        if not p.touched and not na(p.ln)
+            line.set_x2(p.ln, time)
+
+// =============================================================================
+// 3. 1ST-TOUCH ENTRY CONDITIONS (MACRO 4H ONLY)
+// =============================================================================
+bool takeLong  = false
+bool takeShort = false
+
+// Cooldown to prevent multiple entries within the same 4H cycle
+var int lastTradeTime = 0
+bool cooldownPassed = (time - lastTradeTime) > (4 * 3600 * 1000)
+
+if inDateRange and strategy.position_size == 0 and cooldownPassed and array.size(pivots) > 0
+    for i = array.size(pivots) - 1 to 0
+        Pivot4H p = array.get(pivots, i)
+        bool freshLevel = not p.touched and ((time - p.timeDetected) < (maxAgeBars * 4 * 3600 * 1000))
+        
+        if freshLevel
+            // Short: 4H Resistance Bounce
+            if p.isResistance
+                bool touchedRes = (high >= p.price - touchTolerance) and (open < p.price)
+                bool rejected   = close < p.price and close < open
+                if touchedRes and rejected
+                    p.touched := true
+                    if not na(p.ln)
+                        line.set_color(p.ln, color.new(color.gray, 60))
+                        line.set_style(p.ln, line.style_dashed)
+                    takeShort := true
+                    lastTradeTime := time
+                    break
+            
+            // Long: 4H Support Bounce
+            else
+                bool touchedSup = (low <= p.price + touchTolerance) and (open > p.price)
+                bool bounced    = close > p.price and close > open
+                if touchedSup and bounced
+                    p.touched := true
+                    if not na(p.ln)
+                        line.set_color(p.ln, color.new(color.gray, 60))
+                        line.set_style(p.ln, line.style_dashed)
+                    takeLong := true
+                    lastTradeTime := time
+                    break
+
+// =============================================================================
+// 4. POSITION & STEP-TRAILING MANAGEMENT
+// =============================================================================
+var float entryPrice = na
+var float currentSL  = na
+var float hardTP     = na
+var float riskAmount = na
+var bool  beLocked   = false
+
+if takeLong and strategy.position_size == 0
+    entryPrice := close
+    riskAmount := currentSLDist
+    currentSL  := entryPrice - riskAmount
+    hardTP     := entryPrice + currentTPDist
+    beLocked   := false
+    strategy.entry("4H Long", strategy.long)
+
+if takeShort and strategy.position_size == 0
+    entryPrice := close
+    riskAmount := currentSLDist
+    currentSL  := entryPrice + riskAmount
+    hardTP     := entryPrice - currentTPDist
+    beLocked   := false
+    strategy.entry("4H Short", strategy.short)
+
+// Step-Trailing to Breakeven
+if strategy.position_size > 0
+    if useTrailingBE and not beLocked and (high >= entryPrice + (riskAmount * trailTriggerR))
+        currentSL := entryPrice + (riskAmount * lockProfitR)
+        beLocked  := true
+    strategy.exit("Exit Long", from_entry="4H Long", stop=currentSL, limit=hardTP)
+
+else if strategy.position_size < 0
+    if useTrailingBE and not beLocked and (low <= entryPrice - (riskAmount * trailTriggerR))
+        currentSL := entryPrice - (riskAmount * lockProfitR)
+        beLocked  := true
+    strategy.exit("Exit Short", from_entry="4H Short", stop=currentSL, limit=hardTP)
+
+else
+    beLocked := false
+
+// =============================================================================
+// 5. PLOT MARKERS & HUD DASHBOARD
+// =============================================================================
+plotshape(takeLong and strategy.position_size == 0, "Buy Signal", shape.triangleup, location.belowbar, color.green, size=size.normal, text="4H BUY")
+plotshape(takeShort and strategy.position_size == 0, "Sell Signal", shape.triangledown, location.abovebar, color.red, size=size.normal, text="4H SELL")
+
+plot(strategy.position_size != 0 ? hardTP : na, "Hard TP (+2.5R)", color.green, linewidth=2, style=plot.style_linebr)
+plot(strategy.position_size != 0 ? currentSL : na, "Trailing SL", color=beLocked ? color.teal : color.red, linewidth=2, style=plot.style_linebr)
+
+var table hud = table.new(position.top_right, 2, 6, bgcolor=color.new(color.black, 20), border_width=1, border_color=color.gray)
+if barstate.islast
+    table.cell(hud, 0, 0, "Apex 4H Macro", bgcolor=color.blue, text_color=color.white)
+    table.cell(hud, 1, 0, "Status", bgcolor=color.blue, text_color=color.white)
+    table.cell(hud, 0, 1, "Pivot Level TF", text_color=color.white)
+    table.cell(hud, 1, 1, "4-Hour (Forced)", text_color=color.yellow)
+    table.cell(hud, 0, 2, "Position", text_color=color.white)
+    table.cell(hud, 1, 2, strategy.position_size > 0 ? "LONG 🟢" : strategy.position_size < 0 ? "SHORT 🔴" : "FLAT ⚪", text_color=color.white)
+    table.cell(hud, 0, 3, "BE Locked", text_color=color.white)
+    table.cell(hud, 1, 3, beLocked ? "YES (+0.05R) ✅" : "NO ⏳", text_color=beLocked ? color.green : color.orange)
+    table.cell(hud, 0, 4, "Current SL", text_color=color.white)
+    table.cell(hud, 1, 4, strategy.position_size != 0 ? str.tostring(currentSL, "#.##") : "-", text_color=color.white)
+    table.cell(hud, 0, 5, "Hard TP", text_color=color.white)
+    table.cell(hud, 1, 5, strategy.position_size != 0 ? str.tostring(hardTP, "#.##") : "-", text_color=color.white)

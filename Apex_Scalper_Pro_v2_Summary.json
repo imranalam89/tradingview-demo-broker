@@ -1,0 +1,22 @@
+{
+  "strategyName": "Apex Scalper Pro v2.0 (High-Frequency 1% Risk Trailing Scalper)",
+  "backtestDataset": "12 Months (57,435 5m Candles)",
+  "initialCapital": 10000,
+  "finalBalance": 170.25,
+  "netProfitUSD": -9829.75,
+  "returnPct": -98.3,
+  "totalTrades": 1859,
+  "winningTrades": 290,
+  "breakEvenTrades": 962,
+  "losingTrades": 607,
+  "pureWinRatePct": 15.6,
+  "winPlusBreakevenRatePct": 67.3,
+  "profitFactor": 0.6,
+  "grossProfitUSD": 14059.85,
+  "grossLossUSD": 23543.12,
+  "maxDrawdownUSD": 10000.85,
+  "maxDrawdownPct": 98.42,
+  "avgWinUSD": 48.48,
+  "avgLossUSD": 38.79,
+  "expectancyPerTradeUSD": -5.29
+}

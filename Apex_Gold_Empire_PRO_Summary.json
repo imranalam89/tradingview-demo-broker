@@ -1,0 +1,19 @@
+{
+  "strategyName": "Apex Gold Empire PRO (Super High-Profitability 1% Risk Master Strategy)",
+  "backtestDataset": "12 Months (252 Daily Sessions & 57,435 5m Candles)",
+  "initialCapital": 10000,
+  "finalBalance": 12806.71,
+  "netProfitUSD": 2806.71,
+  "returnPct": 28.07,
+  "totalTrades": 14,
+  "winningTrades": 13,
+  "losingTrades": 1,
+  "winRatePct": 92.9,
+  "profitFactor": 27.45,
+  "grossProfitUSD": 2912.83,
+  "grossLossUSD": 106.12,
+  "maxDrawdownUSD": 106.12,
+  "maxDrawdownPct": 1,
+  "avgWinUSD": 224.06,
+  "avgLossUSD": 106.12
+}

@@ -1,0 +1,17 @@
+{
+  "strategyName": "4H Support/Resistance Trailing Bounce (TradingView Live OANDA Data)",
+  "dataset": "Live TradingView Feed (1500 4H Candles: 2025-08-28 01:00 to 2026-08-18 05:00)",
+  "initialCapital": 10000,
+  "finalBalance": 187283.99,
+  "netProfitUSD": 177283.99,
+  "returnPct": 1772.84,
+  "totalTrades": 189,
+  "winningTrades": 122,
+  "losingTrades": 67,
+  "winRatePct": 64.55,
+  "profitFactor": 1.4,
+  "grossProfitUSD": 615948.1,
+  "grossLossUSD": 438664.1,
+  "maxDrawdownUSD": 149600.49,
+  "maxDrawdownPct": 66.52
+}

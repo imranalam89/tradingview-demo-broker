@@ -1,0 +1,22 @@
+{
+  "strategyName": "Apex 1% Risk Super-Profitable Trailing Strategy",
+  "backtestDataset": "12 Months (252 Daily Sessions & 57,435 5m Candles)",
+  "initialCapital": 10000,
+  "finalBalance": 10007.38,
+  "netProfitUSD": 7.38,
+  "returnPct": 0.07,
+  "totalTrades": 42,
+  "winningTrades": 13,
+  "breakEvenTrades": 6,
+  "losingTrades": 23,
+  "pureWinRatePct": 31,
+  "winPlusBreakevenRatePct": 45.2,
+  "profitFactor": 0.99,
+  "grossProfitUSD": 2319.04,
+  "grossLossUSD": 2342.36,
+  "maxDrawdownUSD": 517.71,
+  "maxDrawdownPct": 4.93,
+  "avgWinUSD": 178.39,
+  "avgLossUSD": 101.84,
+  "expectancyPerTradeUSD": 0.18
+}

@@ -1,0 +1,21 @@
+{
+  "strategyName": "1st-Touch Support/Resistance Bounce (4H Timeframe - LAST 6 MONTHS - 10% Risk)",
+  "backtestDataset": "Last 6 Months (Feb 2026 - Aug 2026)",
+  "initialCapital": 10000,
+  "finalBalance": 27705.95,
+  "netProfitUSD": 17705.95,
+  "returnPct": 177.06,
+  "totalTrades": 25,
+  "winningTrades": 18,
+  "breakEvenTrades": 0,
+  "losingTrades": 7,
+  "pureWinRatePct": 72,
+  "winPlusBreakevenRatePct": 72,
+  "profitFactor": 2.19,
+  "grossProfitUSD": 32530.74,
+  "grossLossUSD": 14824.79,
+  "maxDrawdownUSD": 7774.42,
+  "maxDrawdownPct": 36.64,
+  "avgWinUSD": 1807.26,
+  "avgLossUSD": 2117.83
+}

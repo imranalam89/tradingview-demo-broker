@@ -1,0 +1,21 @@
+{
+  "strategyName": "1st-Touch Bounce (4H Timeframe - LAST 6 MONTHS - 10% Risk - ACTIVE TRAILING STOP ENGINE)",
+  "backtestDataset": "Last 6 Months (Feb 2026 - Aug 2026)",
+  "initialCapital": 10000,
+  "finalBalance": 57513.13,
+  "netProfitUSD": 47513.13,
+  "returnPct": 475.13,
+  "totalTrades": 25,
+  "winningTrades": 16,
+  "breakEvenTrades": 0,
+  "losingTrades": 9,
+  "pureWinRatePct": 64,
+  "winPlusBreakevenRatePct": 64,
+  "profitFactor": 2.2,
+  "grossProfitUSD": 87140.29,
+  "grossLossUSD": 39627.16,
+  "maxDrawdownUSD": 13137.48,
+  "maxDrawdownPct": 18.59,
+  "avgWinUSD": 5446.27,
+  "avgLossUSD": 4403.02
+}

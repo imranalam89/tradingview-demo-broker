@@ -1,0 +1,85 @@
+/* Custom Dark Trading Terminal Theme Styling */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: #030712;
+  color: #f3f4f6;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0b0f19;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1f293d;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Animated Price Flash on Updates */
+@keyframes flashGreen {
+  0% { background-color: rgba(16, 185, 129, 0.35); }
+  100% { background-color: transparent; }
+}
+
+@keyframes flashRed {
+  0% { background-color: rgba(244, 63, 94, 0.35); }
+  100% { background-color: transparent; }
+}
+
+.price-flash-up {
+  animation: flashGreen 0.7s ease-out;
+}
+
+.price-flash-down {
+  animation: flashRed 0.7s ease-out;
+}
+
+/* Tab Switching Styling */
+.tab-btn {
+  transition: all 0.2s ease;
+}
+
+.tab-btn.active {
+  color: #22d3ee;
+  border-bottom: 2px solid #06b6d4;
+}
+
+/* Card Glow Effects */
+.kpi-card {
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.9) 0%, rgba(10, 15, 30, 0.9) 100%);
+  border: 1px solid rgba(51, 65, 85, 0.5);
+  transition: all 0.2s ease-in-out;
+}
+
+.kpi-card:hover {
+  border-color: rgba(56, 189, 248, 0.4);
+  box-shadow: 0 4px 20px -5px rgba(6, 182, 212, 0.1);
+}
+
+/* Pulsing Dots */
+.live-pulse {
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  animation: pulseGreen 1.8s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+
+@keyframes pulseGreen {
+  to {
+    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+  }
+}

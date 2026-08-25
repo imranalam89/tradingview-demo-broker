@@ -1,0 +1,173 @@
+//@version=5
+strategy("Apex 4H 1st-Touch Bounce Trailing Strategy", overlay=true, initial_capital=10000, default_qty_type=strategy.percent_of_equity, default_qty_value=10, currency=currency.USD, commission_type=strategy.commission.cash_per_contract, commission_value=0.0)
+
+// ============================================================================
+// 1. INPUT PARAMETERS & ADAPTIVE ASSET SETTINGS
+// ============================================================================
+grp_strat   = "Strategy & Risk Parameters"
+pivotLegs   = input.int(3, "Pivot Detection Strength (Legs)", minval=1, maxval=10, group=grp_strat)
+riskPct     = input.float(10.0, "Capital Risk Per Trade (%)", minval=0.5, maxval=25.0, step=0.5, group=grp_strat)
+rrRatio     = input.float(2.5, "Risk-to-Reward Ratio (1 : R)", minval=1.0, maxval=5.0, step=0.1, group=grp_strat)
+useAtrSL    = input.bool(true, "Use Auto-Adaptive ATR Stop Loss", group=grp_strat, tooltip="Automatically scales SL to price (Works on Gold, BTC, Forex!)")
+atrMult     = input.float(1.5, "ATR Stop Loss Multiplier", minval=0.5, maxval=5.0, step=0.1, group=grp_strat)
+fixedSL     = input.float(8.0, "Fixed SL Distance ($ if ATR off)", minval=1.0, maxval=1000.0, step=1.0, group=grp_strat)
+
+grp_trail   = "Trailing Stop Engine"
+useBE       = input.bool(true, "Enable Risk-Free Breakeven Lock", group=grp_trail)
+beTriggerR  = input.float(0.9, "Breakeven Trigger (R-Multiple)", minval=0.5, maxval=2.0, step=0.1, group=grp_trail)
+useTrail    = input.bool(true, "Enable Dynamic Trailing Stop", group=grp_trail)
+trailTrigR  = input.float(1.2, "Trailing Activation (R-Multiple)", minval=0.8, maxval=3.0, step=0.1, group=grp_trail)
+
+grp_visual  = "Chart Visual Colors"
+colSupp     = input.color(color.new(#2ECC71, 0), "Support Line Color", group=grp_visual)
+colRes      = input.color(color.new(#E74C3C, 0), "Resistance Line Color", group=grp_visual)
+
+// ============================================================================
+// 2. FRACTAL PIVOT DETECTION (SUPPORT & RESISTANCE)
+// ============================================================================
+ph = ta.pivothigh(high, pivotLegs, pivotLegs)
+pl = ta.pivotlow(low, pivotLegs, pivotLegs)
+atrVal = ta.atr(14)
+
+var float lastSupport    = na
+var float lastResistance = na
+var bool  suppTested     = false
+var bool  resTested      = false
+
+if not na(pl)
+    lastSupport := pl
+    suppTested  := false
+
+if not na(ph)
+    lastResistance := ph
+    resTested      := false
+
+plot(lastSupport, "4H Support Floor", color=colSupp, linewidth=2, style=plot.style_linebr)
+plot(lastResistance, "4H Resistance Ceiling", color=colRes, linewidth=2, style=plot.style_linebr)
+
+// Dynamic Stop Loss Calculation
+effectiveSLDist = useAtrSL ? (atrVal * atrMult) : fixedSL
+entryOffset = effectiveSLDist * 0.25
+
+// ============================================================================
+// 3. ENTRY ENGINE WITH ABSOLUTE QTY SAFETY
+// ============================================================================
+isLongCondition  = not na(lastSupport) and not suppTested and low <= (lastSupport + entryOffset) and low >= (lastSupport - effectiveSLDist)
+isShortCondition = not na(lastResistance) and not resTested and high >= (lastResistance - entryOffset) and high <= (lastResistance + effectiveSLDist)
+
+var float entryPrice = na
+var float initialSL  = na
+var float targetTP   = na
+var float currentSL  = na
+var bool  beLocked   = false
+var bool  trailActive= false
+
+// 3A. LONG ENTRY
+if isLongCondition and strategy.position_size == 0
+    entryPrice := lastSupport + entryOffset
+    initialSL  := lastSupport - effectiveSLDist
+    riskPerOz   = math.abs(entryPrice - initialSL)
+    
+    if riskPerOz > 0
+        targetTP   := entryPrice + (riskPerOz * rrRatio)
+        currentSL  := initialSL
+        beLocked   := false
+        trailActive:= false
+        suppTested := true
+
+        dollarsToRisk = strategy.equity * (riskPct / 100.0)
+        // CRITICAL FIX: Ensure qty is ALWAYS strictly positive
+        positionQty   = math.max(0.00001, math.abs(dollarsToRisk / riskPerOz))
+
+        strategy.entry("Long Bounce", strategy.long, qty=positionQty, limit=entryPrice)
+
+// 3B. SHORT ENTRY
+if isShortCondition and strategy.position_size == 0
+    entryPrice := lastResistance - entryOffset
+    initialSL  := lastResistance + effectiveSLDist
+    riskPerOz   = math.abs(initialSL - entryPrice)
+    
+    if riskPerOz > 0
+        targetTP   := entryPrice - (riskPerOz * rrRatio)
+        currentSL  := initialSL
+        beLocked   := false
+        trailActive:= false
+        resTested  := true
+
+        dollarsToRisk = strategy.equity * (riskPct / 100.0)
+        // CRITICAL FIX: Ensure qty is ALWAYS strictly positive
+        positionQty   = math.max(0.00001, math.abs(dollarsToRisk / riskPerOz))
+
+        strategy.entry("Short Bounce", strategy.short, qty=positionQty, limit=entryPrice)
+
+// ============================================================================
+// 4. DYNAMIC TRAILING STOP & EXIT ENGINE
+// ============================================================================
+if strategy.position_size > 0 // LONG POSITION MANAGEMENT
+    riskPerOz = math.abs(entryPrice - initialSL)
+    beTriggerPrice = entryPrice + (riskPerOz * beTriggerR)
+    trailTrigPrice = entryPrice + (riskPerOz * trailTrigR)
+
+    if useBE and not beLocked and high >= beTriggerPrice
+        currentSL := entryPrice + (effectiveSLDist * 0.05)
+        beLocked  := true
+
+    if useTrail and beLocked and high >= trailTrigPrice
+        trailActive := true
+        newTrailLevel = low[1] - (effectiveSLDist * 0.3)
+        if newTrailLevel > currentSL
+            currentSL := newTrailLevel
+
+    strategy.exit("Exit Long", "Long Bounce", stop=currentSL, limit=targetTP)
+
+else if strategy.position_size < 0 // SHORT POSITION MANAGEMENT
+    riskPerOz = math.abs(initialSL - entryPrice)
+    beTriggerPrice = entryPrice - (riskPerOz * beTriggerR)
+    trailTrigPrice = entryPrice - (riskPerOz * trailTrigR)
+
+    if useBE and not beLocked and low <= beTriggerPrice
+        currentSL := entryPrice - (effectiveSLDist * 0.05)
+        beLocked  := true
+
+    if useTrail and beLocked and low <= trailTrigPrice
+        trailActive := true
+        newTrailLevel = high[1] + (effectiveSLDist * 0.3)
+        if newTrailLevel < currentSL
+            currentSL := newTrailLevel
+
+    strategy.exit("Exit Short", "Short Bounce", stop=currentSL, limit=targetTP)
+
+// ============================================================================
+// 5. ON-CHART PERFORMANCE DASHBOARD TABLE
+// ============================================================================
+var table dashTable = table.new(position.top_right, 2, 7, bgcolor=color.new(#0F1624, 15), border_color=color.new(#FFFFFF, 10), border_width=1)
+
+if barstate.islast
+    totalTrades = strategy.closedtrades
+    winTrades   = strategy.wintrades
+    lossTrades  = strategy.losstrades
+    winRate     = totalTrades > 0 ? (winTrades / totalTrades) * 100.0 : 0.0
+    netProfit   = strategy.netprofit
+    retPct      = (netProfit / strategy.initial_capital) * 100.0
+    pf          = strategy.grossloss != 0 ? strategy.grossprofit / strategy.grossloss : strategy.grossprofit
+
+    table.cell(dashTable, 0, 0, "APEX 4H TERMINAL", bgcolor=color.new(#F1C40F, 0), text_color=color.black, text_size=size.small)
+    table.cell(dashTable, 1, 0, "VERIFIED METRICS", bgcolor=color.new(#F1C40F, 0), text_color=color.black, text_size=size.small)
+
+    table.cell(dashTable, 0, 1, "Initial Capital", text_color=color.gray, text_size=size.small)
+    table.cell(dashTable, 1, 1, "$" + str.tostring(strategy.initial_capital, "#,###"), text_color=color.white, text_size=size.small)
+
+    table.cell(dashTable, 0, 2, "Current Balance", text_color=color.gray, text_size=size.small)
+    table.cell(dashTable, 1, 2, "$" + str.tostring(strategy.equity, "#,###.##"), text_color=color.yellow, text_size=size.small)
+
+    table.cell(dashTable, 0, 3, "Net Return (%)", text_color=color.gray, text_size=size.small)
+    table.cell(dashTable, 1, 3, (retPct >= 0 ? "+" : "") + str.tostring(retPct, "#.##") + "%", text_color=retPct >= 0 ? color.green : color.red, text_size=size.small)
+
+    table.cell(dashTable, 0, 4, "Win Rate (%)", text_color=color.gray, text_size=size.small)
+    table.cell(dashTable, 1, 4, str.tostring(winRate, "#.#") + "% (" + str.tostring(winTrades) + "W / " + str.tostring(lossTrades) + "L)", text_color=winRate >= 50 ? color.green : color.red, text_size=size.small)
+
+    table.cell(dashTable, 0, 5, "Profit Factor", text_color=color.gray, text_size=size.small)
+    table.cell(dashTable, 1, 5, str.tostring(pf, "#.##"), text_color=color.yellow, text_size=size.small)
+
+    table.cell(dashTable, 0, 6, "Total Trades", text_color=color.gray, text_size=size.small)
+    table.cell(dashTable, 1, 6, str.tostring(totalTrades), text_color=color.white, text_size=size.small)

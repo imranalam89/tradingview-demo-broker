@@ -1,0 +1,21 @@
+{
+  "strategyName": "Apex 1% Risk Master Trailing Strategy",
+  "backtestDataset": "12 Months (252 Daily Sessions & 57,435 5m Candles)",
+  "initialCapital": 10000,
+  "finalBalance": 10400.9,
+  "netProfitUSD": 400.9,
+  "returnPct": 4.01,
+  "totalTrades": 5,
+  "winningTrades": 3,
+  "breakEvenTrades": 0,
+  "losingTrades": 2,
+  "pureWinRatePct": 60,
+  "winPlusBreakevenRatePct": 60,
+  "profitFactor": 3.01,
+  "grossProfitUSD": 599.9,
+  "grossLossUSD": 199,
+  "maxDrawdownUSD": 199,
+  "maxDrawdownPct": 1.99,
+  "avgWinUSD": 199.97,
+  "avgLossUSD": 99.5
+}

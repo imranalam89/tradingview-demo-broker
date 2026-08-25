@@ -1,0 +1,250 @@
+//@version=5
+strategy("Apex Precision Flow Scalper PRO [5M]", 
+     shorttitle="Apex Scalper PRO", 
+     overlay=true, 
+     initial_capital=10000, 
+     currency=currency.USD,
+     default_qty_type=strategy.percent_of_equity, 
+     default_qty_value=10, 
+     commission_type=strategy.commission.percent, 
+     commission_value=0.03, 
+     slippage=1, 
+     process_orders_on_close=true,
+     precision=2,
+     max_bars_back=500)
+
+// =============================================================================
+// 1. INPUT CONFIGURATION & USER CONTROLS
+// =============================================================================
+
+// --- General Strategy & Session Settings ---
+grp_gen = "=== Strategy & Session Settings ==="
+use_session_filter = input.bool(true, "Enable Session Killzone Filter", group=grp_gen, tooltip="Limits trading to active London and New York liquid market hours")
+session_tz         = input.string("UTC", "Session Timezone", options=["UTC", "America/New_York", "Europe/London", "Asia/Tokyo"], group=grp_gen)
+session_times      = input.session("0630-1830", "Trading Sessions (UTC)", group=grp_gen, tooltip="Covers high-liquidity London + NY hours (06:30 to 18:30 UTC)")
+max_daily_trades   = input.int(4, "Max Daily Trades Cap", minval=1, maxval=10, group=grp_gen, tooltip="Limits strategy to 3-4 trades per calendar day")
+trade_direction    = input.string("Both", "Allowed Trade Direction", options=["Both", "Long Only", "Short Only"], group=grp_gen)
+
+// --- Trend & Market Structure Filters ---
+grp_trend = "=== Trend & Momentum Filters ==="
+ema_fast_len     = input.int(9, "Fast Momentum EMA", minval=1, maxval=50, group=grp_trend)
+ema_slow_len     = input.int(21, "Slow Momentum EMA", minval=5, maxval=100, group=grp_trend)
+ema_baseline_len = input.int(200, "Macro Baseline Trend EMA", minval=50, maxval=500, group=grp_trend)
+use_slope        = input.bool(true, "Require 200 EMA Slope Angle Confirmation", group=grp_trend, tooltip="Filters out sideways chop by requiring the 200 EMA to be sloped")
+slope_bars       = input.int(5, "Slope Lookback Bars", minval=1, maxval=20, group=grp_trend)
+
+// --- Momentum & RSI Filters ---
+grp_mom = "=== RSI Momentum Filters ==="
+rsi_len          = input.int(14, "RSI Length", minval=2, maxval=50, group=grp_mom)
+rsi_bull_min     = input.float(48.0, "Long RSI Minimum Threshold", minval=30.0, maxval=60.0, group=grp_mom)
+rsi_bull_max     = input.float(72.0, "Long RSI Maximum Threshold (Anti-Top)", minval=60.0, maxval=85.0, group=grp_mom)
+rsi_bear_min     = input.float(28.0, "Short RSI Minimum Threshold (Anti-Bottom)", minval=15.0, maxval=40.0, group=grp_mom)
+rsi_bear_max     = input.float(52.0, "Short RSI Maximum Threshold", minval=40.0, maxval=70.0, group=grp_mom)
+
+// --- Risk Management, Dynamic SL & TP ---
+grp_risk = "=== Risk Management & Exits ==="
+risk_mode        = input.string("Percent of Equity", "Position Sizing Method", options=["Percent of Equity", "Fixed Capital ($)", "Fixed Size / Lots"], group=grp_risk)
+risk_pct         = input.float(1.5, "Risk Per Trade (%)", minval=0.1, maxval=5.0, step=0.1, group=grp_risk, tooltip="Percentage of account equity risked per trade")
+fixed_cash_amt   = input.float(1000.0, "Fixed Position Value ($)", minval=10.0, group=grp_risk)
+fixed_qty_lots   = input.float(1.0, "Fixed Lot/Contract Quantity", minval=0.01, step=0.01, group=grp_risk)
+
+atr_len          = input.int(14, "ATR Length", minval=5, maxval=50, group=grp_risk)
+sl_atr_mult      = input.float(1.5, "Stop Loss (x ATR)", minval=0.5, maxval=4.0, step=0.1, group=grp_risk)
+min_sl_dist      = input.float(2.0, "Minimum SL Distance ($/Points)", minval=0.5, maxval=20.0, step=0.5, group=grp_risk)
+rr_ratio         = input.float(2.0, "Risk-to-Reward Ratio (1:R)", minval=1.0, maxval=5.0, step=0.1, group=grp_risk)
+
+// --- Dynamic Breakeven & Trailing ---
+grp_trail = "=== Profit Lock & Trailing ==="
+enable_be        = input.bool(true, "Enable Breakeven Lock", group=grp_trail, tooltip="Moves SL to Breakeven (+ small buffer) once trade reaches target R-Multiple")
+be_trigger_r     = input.float(1.0, "Breakeven Trigger (R-Multiple)", minval=0.5, maxval=2.5, step=0.1, group=grp_trail)
+be_offset_atr    = input.float(0.15, "Breakeven Fee Buffer (x ATR)", minval=0.0, maxval=0.5, step=0.05, group=grp_trail)
+
+// --- UI & Visuals ---
+grp_ui = "=== UI & Visuals ==="
+show_ribbon      = input.bool(true, "Show EMA Ribbon", group=grp_ui)
+show_dashboard   = input.bool(true, "Show Telemetry Dashboard", group=grp_ui)
+show_tp_sl       = input.bool(true, "Draw Active TP / SL Levels", group=grp_ui)
+
+// =============================================================================
+// 2. INDICATOR ENGINE & MATHEMATICAL CORE
+// =============================================================================
+
+ema_fast  = ta.ema(close, ema_fast_len)
+ema_slow  = ta.ema(close, ema_slow_len)
+ema_base  = ta.ema(close, ema_baseline_len)
+atr_val   = ta.atr(atr_len)
+rsi_val   = ta.rsi(close, rsi_len)
+
+// Session Detection
+in_session = not use_session_filter or not na(time(timeframe.period, session_times, session_tz))
+
+// Macro Trend & Slope Angle
+slope_bull = not use_slope or (ema_base >= ema_base[slope_bars])
+slope_bear = not use_slope or (ema_base <= ema_base[slope_bars])
+
+bull_trend = (close > ema_base) and (ema_slow > ema_base) and slope_bull
+bear_trend = (close < ema_base) and (ema_slow < ema_base) and slope_bear
+
+// Daily Trade Limit Tracker
+var int daily_trade_count = 0
+var int last_trade_day = 0
+current_day = dayofmonth(time)
+
+if current_day != last_trade_day
+    daily_trade_count := 0
+    last_trade_day := current_day
+
+can_trade_today = daily_trade_count < max_daily_trades
+
+// =============================================================================
+// 3. OBJECTIVE ENTRY TRIGGERS
+// =============================================================================
+
+// Fast momentum crossover OR pullback touch & rejection
+long_cross  = ta.crossover(ema_fast, ema_slow) or (low <= ema_fast and close > ema_fast and close[1] <= ema_fast[1])
+short_cross = ta.crossunder(ema_fast, ema_slow) or (high >= ema_fast and close < ema_fast and close[1] >= ema_fast[1])
+
+long_condition  = bull_trend and long_cross and (rsi_val >= rsi_bull_min and rsi_val <= rsi_bull_max) and in_session and can_trade_today and (trade_direction == "Both" or trade_direction == "Long Only")
+short_condition = bear_trend and short_cross and (rsi_val <= rsi_bear_max and rsi_val >= rsi_bear_min) and in_session and can_trade_today and (trade_direction == "Both" or trade_direction == "Short Only")
+
+// =============================================================================
+// 4. POSITION SIZING & PERSISTENT BRACKETS
+// =============================================================================
+
+var float entry_price    = na
+var float current_sl     = na
+var float target_tp      = na
+var float initial_risk   = na
+var bool  be_locked      = false
+
+// Long Entry
+if long_condition and strategy.position_size == 0
+    entry_price  := close
+    sl_distance   = math.max(atr_val * sl_atr_mult, min_sl_dist)
+    initial_risk := sl_distance
+    current_sl   := entry_price - sl_distance
+    target_tp    := entry_price + (sl_distance * rr_ratio)
+    be_locked    := false
+
+    // Position Sizing Calculation
+    float pos_qty = 1.0
+    if risk_mode == "Percent of Equity"
+        dollars_risk = strategy.equity * (risk_pct / 100.0)
+        pos_qty      := math.max(0.01, dollars_risk / sl_distance)
+    else if risk_mode == "Fixed Capital ($)"
+        pos_qty      := math.max(0.01, fixed_cash_amt / entry_price)
+    else
+        pos_qty      := fixed_qty_lots
+
+    strategy.entry("Long_Scalp", strategy.long, qty=pos_qty, alert_message="APEX SCALPER: Long Signal Executed")
+    daily_trade_count += 1
+
+// Short Entry
+if short_condition and strategy.position_size == 0
+    entry_price  := close
+    sl_distance   = math.max(atr_val * sl_atr_mult, min_sl_dist)
+    initial_risk := sl_distance
+    current_sl   := entry_price + sl_distance
+    target_tp    := entry_price - (sl_distance * rr_ratio)
+    be_locked    := false
+
+    // Position Sizing Calculation
+    float pos_qty = 1.0
+    if risk_mode == "Percent of Equity"
+        dollars_risk = strategy.equity * (risk_pct / 100.0)
+        pos_qty      := math.max(0.01, dollars_risk / sl_distance)
+    else if risk_mode == "Fixed Capital ($)"
+        pos_qty      := math.max(0.01, fixed_cash_amt / entry_price)
+    else
+        pos_qty      := fixed_qty_lots
+
+    strategy.entry("Short_Scalp", strategy.short, qty=pos_qty, alert_message="APEX SCALPER: Short Signal Executed")
+    daily_trade_count += 1
+
+// =============================================================================
+// 5. ACTIVE TRADE MANAGEMENT & RELIABLE EXITS
+// =============================================================================
+
+if strategy.position_size > 0
+    // Dynamic Breakeven Snap
+    if enable_be and not be_locked and (high >= entry_price + (initial_risk * be_trigger_r))
+        current_sl := entry_price + (atr_val * be_offset_atr)
+        be_locked  := true
+
+    strategy.exit("Exit_Long", from_entry="Long_Scalp", stop=current_sl, limit=target_tp, alert_message="APEX SCALPER: Long Exit Filled")
+
+else if strategy.position_size < 0
+    // Dynamic Breakeven Snap
+    if enable_be and not be_locked and (low <= entry_price - (initial_risk * be_trigger_r))
+        current_sl := entry_price - (atr_val * be_offset_atr)
+        be_locked  := true
+
+    strategy.exit("Exit_Short", from_entry="Short_Scalp", stop=current_sl, limit=target_tp, alert_message="APEX SCALPER: Short Exit Filled")
+
+else
+    be_locked := false
+
+// =============================================================================
+// 6. CHART VISUALIZATION & UI
+// =============================================================================
+
+col_fast = ema_fast >= ema_slow ? color.new(#00E676, 10) : color.new(#FF5252, 10)
+col_slow = ema_fast >= ema_slow ? color.new(#00B0FF, 30) : color.new(#FF1744, 30)
+col_base = color.new(#FFD700, 20)
+
+p_fast = plot(show_ribbon ? ema_fast : na, "Fast EMA", color=col_fast, linewidth=1)
+p_slow = plot(show_ribbon ? ema_slow : na, "Slow EMA", color=col_slow, linewidth=2)
+plot(show_ribbon ? ema_base : na, "Macro Baseline 200", color=col_base, linewidth=3)
+fill(p_fast, p_slow, color=ema_fast >= ema_slow ? color.new(#00E676, 85) : color.new(#FF5252, 85), title="EMA Ribbon Cloud")
+
+// Entry Markers
+plotshape(long_condition and strategy.position_size[1] == 0, title="Long Signal", location=location.belowbar, color=color.green, style=shape.triangleup, size=size.small, text="BUY")
+plotshape(short_condition and strategy.position_size[1] == 0, title="Short Signal", location=location.abovebar, color=color.red, style=shape.triangledown, size=size.small, text="SELL")
+
+// Dynamic Live SL & TP Lines
+plot(show_tp_sl and strategy.position_size != 0 ? current_sl : na, "Active Stop Loss", color=color.red, style=plot.style_linebr, linewidth=2)
+plot(show_tp_sl and strategy.position_size != 0 ? target_tp : na, "Active Take Profit", color=color.green, style=plot.style_linebr, linewidth=2)
+
+// =============================================================================
+// 7. TELEMETRY & PERFORMANCE DASHBOARD
+// =============================================================================
+
+var table dash = table.new(position.top_right, 2, 7, bgcolor=color.new(#131722, 10), border_color=color.new(#2A2E39, 0), border_width=1)
+
+if show_dashboard and barstate.islast
+    table.cell(dash, 0, 0, "APEX SCALPER", bgcolor=color.new(#2962FF, 0), text_color=color.white, text_size=size.small)
+    table.cell(dash, 1, 0, "PRO TELEMETRY", bgcolor=color.new(#2962FF, 0), text_color=color.white, text_size=size.small)
+    
+    trend_txt = close > ema_base ? "BULLISH" : "BEARISH"
+    trend_col = close > ema_base ? color.green : color.red
+    table.cell(dash, 0, 1, "Macro Trend (200)", text_color=color.gray, text_size=size.small)
+    table.cell(dash, 1, 1, trend_txt, text_color=trend_col, text_size=size.small)
+    
+    sess_txt = in_session ? "ACTIVE KILLZONE" : "OUT OF SESSION"
+    sess_col = in_session ? color.green : color.gray
+    table.cell(dash, 0, 2, "Liquidity Session", text_color=color.gray, text_size=size.small)
+    table.cell(dash, 1, 2, sess_txt, text_color=sess_col, text_size=size.small)
+    
+    table.cell(dash, 0, 3, "Trades Today / Max", text_color=color.gray, text_size=size.small)
+    table.cell(dash, 1, 3, str.tostring(daily_trade_count) + " / " + str.tostring(max_daily_trades), text_color=daily_trade_count >= max_daily_trades ? color.red : color.white, text_size=size.small)
+    
+    total_trades = strategy.closedtrades
+    win_trades   = strategy.wintrades
+    win_rate     = total_trades > 0 ? (win_trades / total_trades) * 100.0 : 0.0
+    table.cell(dash, 0, 4, "Closed Trades", text_color=color.gray, text_size=size.small)
+    table.cell(dash, 1, 4, str.tostring(total_trades) + " (" + str.tostring(win_rate, "#.#") + "% Win)", text_color=color.white, text_size=size.small)
+    
+    gross_loss = math.abs(strategy.grossloss)
+    pf = gross_loss > 0 ? (strategy.grossprofit / gross_loss) : (strategy.grossprofit > 0 ? 99.0 : 0.0)
+    table.cell(dash, 0, 5, "Profit Factor", text_color=color.gray, text_size=size.small)
+    table.cell(dash, 1, 5, str.tostring(pf, "#.##"), text_color=pf >= 1.2 ? color.green : color.orange, text_size=size.small)
+
+    table.cell(dash, 0, 6, "Net Profit", text_color=color.gray, text_size=size.small)
+    table.cell(dash, 1, 6, "$" + str.tostring(strategy.netprofit, "#.##"), text_color=strategy.netprofit >= 0 ? color.green : color.red, text_size=size.small)
+
+// =============================================================================
+// 8. ALERTS ENGINE
+// =============================================================================
+
+alertcondition(long_condition and strategy.position_size[1] == 0, title="Apex Scalper: BUY Alert", message="APEX SCALPER: Long Scalp Entry on {{ticker}} at {{close}}")
+alertcondition(short_condition and strategy.position_size[1] == 0, title="Apex Scalper: SELL Alert", message="APEX SCALPER: Short Scalp Entry on {{ticker}} at {{close}}")

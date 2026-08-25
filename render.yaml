@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: apex-tradingview-broker
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: WEBHOOK_SECRET
+        value: antigravity_tv_secret_2026
+      - key: PORT
+        value: 10000

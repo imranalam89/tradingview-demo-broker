@@ -1,0 +1,24 @@
+# Netlify Deployment Configuration for Apex Broker Frontend
+[build]
+  publish = "public"
+  command = ""
+
+# Proxy API and Webhook requests to your 24/7 Cloud Backend (Render / Koyeb / Railway / VPS / Cloudflare Tunnel)
+# Replace https://your-backend-app.onrender.com with your actual backend URL after deploying the server
+[[redirects]]
+  from = "/api/*"
+  to = "https://your-backend-app.onrender.com/api/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/ws"
+  to = "https://your-backend-app.onrender.com/ws"
+  status = 200
+  force = true
+
+# SPA Single Page App fallback
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

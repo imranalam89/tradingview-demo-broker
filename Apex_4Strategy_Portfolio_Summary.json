@@ -1,0 +1,47 @@
+{
+  "strategyName": "Apex 4-Strategy Multi-System Portfolio (Optimized 1% Risk Engine)",
+  "backtestDataset": "12 Months (252 Daily Sessions & 57,435 5m Candles)",
+  "initialCapital": 10000,
+  "finalBalance": 12919.29,
+  "netProfitUSD": 2919.29,
+  "returnPct": 29.19,
+  "totalTrades": 36,
+  "winningTrades": 21,
+  "breakEvenTrades": 2,
+  "losingTrades": 13,
+  "pureWinRatePct": 58.3,
+  "winPlusBreakevenRatePct": 63.9,
+  "profitFactor": 2.73,
+  "grossProfitUSD": 4608.15,
+  "grossLossUSD": 1690.8,
+  "maxDrawdownUSD": 808.04,
+  "maxDrawdownPct": 5.89,
+  "avgWinUSD": 219.44,
+  "avgLossUSD": 130.06,
+  "subStrategyBreakdown": [
+    {
+      "SubStrategy": "Sub-Strat 1: 1st-Touch Bounce",
+      "Trades": 14,
+      "WinRate": "92.9%",
+      "NetProfitUSD": "$2806.71"
+    },
+    {
+      "SubStrategy": "Sub-Strat 2: 3-Touch Breakdown",
+      "Trades": 10,
+      "WinRate": "60.0%",
+      "NetProfitUSD": "$781.43"
+    },
+    {
+      "SubStrategy": "Sub-Strat 3: NY Liquidity Sweep",
+      "Trades": 8,
+      "WinRate": "25.0%",
+      "NetProfitUSD": "$-408.51"
+    },
+    {
+      "SubStrategy": "Sub-Strat 4: Double Bottom Sweep",
+      "Trades": 4,
+      "WinRate": "0.0%",
+      "NetProfitUSD": "$-260.34"
+    }
+  ]
+}

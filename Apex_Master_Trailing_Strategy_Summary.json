@@ -1,0 +1,21 @@
+{
+  "strategyName": "Apex Master Trailing Stop Strategy (Lock & Trail Model)",
+  "backtestDataset": "12 Months (252 Daily Sessions & 57,435 5m Candles)",
+  "initialCapital": 10000,
+  "finalBalance": 10480,
+  "netProfitUSD": 480,
+  "returnPct": 4.8,
+  "totalTrades": 5,
+  "winningTrades": 3,
+  "breakEvenTrades": 0,
+  "losingTrades": 2,
+  "pureWinRatePct": 60,
+  "winPlusBreakevenRatePct": 60,
+  "profitFactor": 3,
+  "grossProfitUSD": 720,
+  "grossLossUSD": 240,
+  "maxDrawdownUSD": 240,
+  "maxDrawdownPct": 2.4,
+  "avgWinUSD": 240,
+  "avgLossUSD": 120
+}

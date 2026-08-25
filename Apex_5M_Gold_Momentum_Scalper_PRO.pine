@@ -1,0 +1,155 @@
+//@version=5
+strategy("Apex 5M Gold Velocity Scalper PRO (High Win-Rate)", 
+         shorttitle="Apex_5M_PRO", 
+         overlay=true, 
+         initial_capital=10000, 
+         currency=currency.USD, 
+         commission_type=strategy.commission.percent, 
+         commission_value=0.04, 
+         slippage=1, 
+         pyramiding=0)
+
+// =============================================================================
+// 1. STRATEGY INPUTS & RISK MANAGEMENT
+// =============================================================================
+grp_risk    = "Risk & Position Sizing"
+riskPct     = input.float(2.0, "Capital Risk Per Scalp (%)", minval=0.5, maxval=10.0, step=0.5)
+atrMultSL   = input.float(1.5, "ATR Stop Loss Multiplier", minval=0.8, maxval=3.5, step=0.1)
+minSLDist   = input.float(2.5, "Minimum SL Distance ($)", minval=1.0, maxval=10.0, step=0.5)
+rrRatio     = input.float(2.0, "Risk-to-Reward Ratio (1:R)", minval=1.0, maxval=4.0, step=0.1)
+
+grp_trend   = "High-Accuracy Trend Filters"
+emaFastLen  = input.int(9, "Fast Momentum EMA", minval=1)
+emaSlowLen  = input.int(21, "Slow Momentum EMA", minval=1)
+emaTrendLen = input.int(200, "Macro Baseline Trend EMA", minval=50)
+useSlope    = input.bool(true, "Require 200 EMA Slope Confirmation (Trend Angle)")
+slopeBars   = input.int(5, "Slope Lookback Bars", minval=1, maxval=20)
+
+rsiLen      = input.int(14, "RSI Filter Length", minval=2)
+rsiBullMin  = input.int(54, "RSI Bullish Min Threshold", minval=40, maxval=65)
+rsiBullMax  = input.int(70, "RSI Bullish Max (Overbought Guard)", minval=65, maxval=85)
+rsiBearMax  = input.int(46, "RSI Bearish Max Threshold", minval=35, maxval=60)
+rsiBearMin  = input.int(30, "RSI Bearish Min (Oversold Guard)", minval=15, maxval=35)
+
+grp_trail   = "Multi-Stage Profit Lock Engine"
+useBE       = input.bool(true, "Stage 1: Lock Breakeven at +0.85R")
+beTriggerR  = input.float(0.85, "Stage 1 Trigger (R-Multiple)", minval=0.5, maxval=1.5, step=0.05)
+lockProfitR = input.float(0.15, "Stage 1 Locked Buffer (+0.15R)", minval=0.0, maxval=0.5, step=0.05)
+
+useTrail    = input.bool(true, "Stage 2: Lock Profit at +1.4R")
+trailTrigR  = input.float(1.40, "Stage 2 Activation (R-Multiple)", minval=1.0, maxval=2.5, step=0.05)
+trailLockR  = input.float(0.75, "Stage 2 Locked Profit (+0.75R)", minval=0.2, maxval=1.5, step=0.05)
+
+grp_session = "Session Killzones"
+useSession  = input.bool(true, "Filter for London and NY Sessions (07:00 - 18:00 UTC)")
+sessionTime = input.session("0700-1800", "Trading Session (UTC)")
+
+// =============================================================================
+// 2. INDICATOR ENGINE
+// =============================================================================
+emaFast  = ta.ema(close, emaFastLen)
+emaSlow  = ta.ema(close, emaSlowLen)
+emaTrend = ta.ema(close, emaTrendLen)
+atrVal   = ta.atr(14)
+rsiVal   = ta.rsi(close, rsiLen)
+
+inSession = not useSession or not na(time(timeframe.period, sessionTime + ":1234567", "UTC"))
+
+// Trend Slope Confirmation (Guarantees Active Trend Direction)
+slopeBull = not useSlope or (emaTrend >= emaTrend[slopeBars])
+slopeBear = not useSlope or (emaTrend <= emaTrend[slopeBars])
+
+bullishTrend = (close > emaTrend) and slopeBull
+bearishTrend = (close < emaTrend) and slopeBear
+
+// Plot Overlays
+plot(emaFast, "9 EMA Fast", color = #2ECC71, linewidth = 1)
+plot(emaSlow, "21 EMA Slow", color = #EF4444, linewidth = 1)
+plot(emaTrend, "200 EMA Baseline Trend", color = #F59E0B, linewidth = 2)
+
+// =============================================================================
+// 3. ENTRY CONDITIONS
+// =============================================================================
+longSignal  = ta.crossover(emaFast, emaSlow) and bullishTrend and (rsiVal >= rsiBullMin) and (rsiVal <= rsiBullMax) and inSession
+shortSignal = ta.crossunder(emaFast, emaSlow) and bearishTrend and (rsiVal <= rsiBearMax) and (rsiVal >= rsiBearMin) and inSession
+
+// =============================================================================
+// 4. POSITION SIZING & EXECUTION
+// =============================================================================
+var float entryPrice = na
+var float initialSL  = na
+var float currentSL  = na
+var float targetTP   = na
+var float riskAmount = na
+var bool  beLocked   = false
+var bool  trailLocked= false
+
+float slDist = math.max(atrVal * atrMultSL, minSLDist)
+float tpDist = slDist * rrRatio
+
+if longSignal and strategy.position_size == 0
+    entryPrice := close
+    riskAmount := slDist
+    initialSL  := entryPrice - riskAmount
+    currentSL  := initialSL
+    targetTP   := entryPrice + tpDist
+    beLocked   := false
+    trailLocked:= false
+
+    dollarsToRisk = strategy.equity * (riskPct / 100.0)
+    positionQty   = math.max(0.01, dollarsToRisk / riskAmount)
+    strategy.entry("Long Scalp", strategy.long, qty=positionQty)
+
+if shortSignal and strategy.position_size == 0
+    entryPrice := close
+    riskAmount := slDist
+    initialSL  := entryPrice + riskAmount
+    currentSL  := initialSL
+    targetTP   := entryPrice - tpDist
+    beLocked   := false
+    trailLocked:= false
+
+    dollarsToRisk = strategy.equity * (riskPct / 100.0)
+    positionQty   = math.max(0.01, dollarsToRisk / riskAmount)
+    strategy.entry("Short Scalp", strategy.short, qty=positionQty)
+
+// =============================================================================
+// 5. MULTI-STAGE STEP-TRAILING PROFIT LOCK
+// =============================================================================
+if strategy.position_size > 0
+    // Stage 1: Hit +0.85R -> Lock Breakeven (+0.15R buffer)
+    if useBE and not beLocked and (high >= entryPrice + (riskAmount * beTriggerR))
+        currentSL := entryPrice + (riskAmount * lockProfitR)
+        beLocked  := true
+
+    // Stage 2: Hit +1.40R -> Lock +0.75R Profit
+    if useTrail and beLocked and not trailLocked and (high >= entryPrice + (riskAmount * trailTrigR))
+        currentSL := math.max(currentSL, entryPrice + (riskAmount * trailLockR))
+        trailLocked := true
+
+    strategy.exit("Exit Long", from_entry="Long Scalp", stop=currentSL, limit=targetTP)
+
+else if strategy.position_size < 0
+    // Stage 1: Hit +0.85R -> Lock Breakeven (+0.15R buffer)
+    if useBE and not beLocked and (low <= entryPrice - (riskAmount * beTriggerR))
+        currentSL := entryPrice - (riskAmount * lockProfitR)
+        beLocked  := true
+
+    // Stage 2: Hit +1.40R -> Lock +0.75R Profit
+    if useTrail and beLocked and not trailLocked and (low <= entryPrice - (riskAmount * trailTrigR))
+        currentSL := math.min(currentSL, entryPrice - (riskAmount * trailLockR))
+        trailLocked := true
+
+    strategy.exit("Exit Short", from_entry="Short Scalp", stop=currentSL, limit=targetTP)
+else
+    beLocked    := false
+    trailLocked := false
+
+// =============================================================================
+// 6. VISUAL TRADE MARKERS & LEVELS
+// =============================================================================
+plot(strategy.position_size != 0 ? targetTP : na, "Take Profit Target", color = color.green, linewidth = 2, style = plot.style_linebr)
+plot(strategy.position_size != 0 ? currentSL : na, "Multi-Stage SL", color = trailLocked ? color.purple : (beLocked ? color.teal : color.red), linewidth = 2, style = plot.style_linebr)
+
+plotshape(longSignal and strategy.position_size == 0, "Scalp BUY", shape.triangleup, location.belowbar, color = color.green, size = size.small, text = "5M BUY")
+plotshape(shortSignal and strategy.position_size == 0, "Scalp SELL", shape.triangledown, location.abovebar, color = color.red, size = size.small, text = "5M SELL")

@@ -1,0 +1,21 @@
+{
+  "strategyName": "1st-Touch Support/Resistance Bounce (4H Timeframe - 10% Capital Risk)",
+  "backtestDataset": "12 Months (1,424 4-Hour Candles)",
+  "initialCapital": 10000,
+  "finalBalance": 29911.77,
+  "netProfitUSD": 19911.77,
+  "returnPct": 199.12,
+  "totalTrades": 19,
+  "winningTrades": 12,
+  "breakEvenTrades": 0,
+  "losingTrades": 7,
+  "pureWinRatePct": 63.2,
+  "winPlusBreakevenRatePct": 63.2,
+  "profitFactor": 2.34,
+  "grossProfitUSD": 34782.76,
+  "grossLossUSD": 14870.99,
+  "maxDrawdownUSD": 7016.34,
+  "maxDrawdownPct": 19,
+  "avgWinUSD": 2898.56,
+  "avgLossUSD": 2124.43
+}
