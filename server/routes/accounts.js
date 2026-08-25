@@ -80,7 +80,7 @@ router.post('/', (req, res) => {
       return res.status(400).json({ success: false, error: 'Account name is required' });
     }
 
-    const id = 'demo_' + crypto.randomUUID().slice(0, 6);
+    const id = req.body.id ? req.body.id.trim() : ('demo_' + crypto.randomUUID().slice(0, 6));
     const now = new Date().toISOString();
     const balance = parseFloat(initial_balance) || 10000.0;
 
