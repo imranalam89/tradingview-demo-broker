@@ -8,6 +8,7 @@ const { WebSocketServer, WebSocket } = require('ws');
 const db = require('./db/database');
 const priceFeed = require('./engine/priceFeed');
 const tradingEngine = require('./engine/tradingEngine');
+const strategyEngine = require('./engine/strategyEngine');
 
 const webhookRoutes = require('./routes/webhook');
 const accountsRoutes = require('./routes/accounts');
@@ -131,6 +132,7 @@ server.listen(PORT, () => {
   console.log(`====================================================`);
   
   priceFeed.start();
+  strategyEngine.start();
 });
 
 // Graceful shutdown

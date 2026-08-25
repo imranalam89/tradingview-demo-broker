@@ -154,7 +154,7 @@ router.post('/', async (req, res) => {
 
     if (act === 'CLOSE' || act === 'CLOSE_LONG' || act === 'CLOSE_SHORT' || act === 'EXIT') {
       // Find open position for this account and symbol
-      const posQuery = 'SELECT * FROM positions WHERE account_id = ? AND symbol = ?';
+      const posQuery = 'SELECT * FROM positions WHERE account_id = ? AND symbol = ? AND status = \'OPEN\' ORDER BY opened_at DESC LIMIT 1';
       const normSym = payload.symbol.toUpperCase().replace('/', '').replace('.', '').trim();
       const pos = db.prepare(posQuery).get(payload.accountId, normSym);
 
