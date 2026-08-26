@@ -113,30 +113,22 @@ function initSchema() {
     );
   `);
 
-  // Seed default demo accounts if none exist
-  const count = db.prepare('SELECT COUNT(*) as count FROM accounts').get().count;
-  if (count === 0) {
-    const now = new Date().toISOString();
-    const insertAccount = db.prepare(`
-      INSERT INTO accounts (id, name, initial_balance, balance, currency, leverage, fee_rate, slippage_rate, spread_rate, assigned_strategy, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `);
+  // Clean up legacy demo accounts (demo_001, demo_002, demo_003, demo_004)
+  db.exec(`
+    DELETE FROM positions WHERE account_id IN ('demo_001', 'demo_002', 'demo_003', 'demo_004');
+    DELETE FROM trades WHERE account_id IN ('demo_001', 'demo_002', 'demo_003', 'demo_004');
+    DELETE FROM equity_snapshots WHERE account_id IN ('demo_001', 'demo_002', 'demo_003', 'demo_004');
+    DELETE FROM accounts WHERE id IN ('demo_001', 'demo_002', 'demo_003', 'demo_004');
+  `);
 
-    insertAccount.run('demo_f589a3', 'XAU 15M IND2', 10000.0, 10000.0, 'USD', 20.0, 0.0004, 0.0002, 0.0001, 'Apex Scalper PRO Auto [XAU 15M]', now, now);
-    insertAccount.run('demo_001', 'Demo Account 1 (Gold Scalper)', 10000.0, 10000.0, 'USD', 10.0, 0.0004, 0.0002, 0.0001, 'Apex Gold Scalper', now, now);
-    insertAccount.run('demo_002', 'Demo Account 2 (BTC Momentum)', 10000.0, 10000.0, 'USD', 5.0, 0.0004, 0.0002, 0.0001, 'BTC Momentum Engine', now, now);
-    insertAccount.run('demo_003', 'Demo Account 3 (Trend Follower)', 10000.0, 10000.0, 'USD', 1.0, 0.0002, 0.0001, 0.0001, 'Trend Follower 4H', now, now);
-    insertAccount.run('demo_004', 'Demo Account 4 (Mean Reversion)', 10000.0, 10000.0, 'USD', 1.0, 0.0002, 0.0001, 0.0001, 'Mean Reversion PRO', now, now);
-
-    console.log('✅ Seeded initial demo accounts (demo_f589a3, demo_001, demo_002, demo_003, demo_004)');
-  }
-
-  // Ensure XAU 15M IND2 is always guaranteed to exist in database
+  // Ensure XAU 15M IND2 is always guaranteed to exist as the primary account
   const now = new Date().toISOString();
   db.prepare(`
     INSERT OR IGNORE INTO accounts (id, name, initial_balance, balance, currency, leverage, fee_rate, slippage_rate, spread_rate, assigned_strategy, created_at, updated_at)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run('demo_f589a3', 'XAU 15M IND2', 10000.0, 10000.0, 'USD', 20.0, 0.0004, 0.0002, 0.0001, 'Apex Scalper PRO Auto [XAU 15M]', now, now);
+
+  console.log('✅ Active demo account: XAU 15M IND2 (demo_f589a3)');
 }
 
 initSchema();

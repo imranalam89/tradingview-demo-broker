@@ -5,7 +5,7 @@ if (window.location.hostname === 'localhost' && window.location.port === '5500')
   API_URL = 'http://localhost:3000';
 }
 
-let activeAccountId = 'demo_001';
+let activeAccountId = 'demo_f589a3';
 let accounts = [];
 let positions = [];
 let livePrices = {};
