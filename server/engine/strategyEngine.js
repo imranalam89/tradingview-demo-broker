@@ -75,7 +75,7 @@ class StrategyEngine extends EventEmitter {
   }
 
   registerDefaultStrategies() {
-    // 1. Exact Settings from User Screenshots for XAU 15M IND2 (Account: demo_f589a3)
+    // 1. Account 1: XAU 15M IND2 (Account: demo_f589a3)
     this.addStrategy('demo_f589a3', {
       name: 'Apex Scalper PRO Auto [XAU 15M]',
       symbol: 'XAUUSD',
@@ -103,7 +103,7 @@ class StrategyEngine extends EventEmitter {
       sessionEndHour: 18,
       sessionEndMin: 30,
       maxDailyTrades: 6,
-      tradeDirection: 'Both', // 'Both', 'Long Only', 'Short Only'
+      tradeDirection: 'Both',
 
       // Risk & Position Sizing
       riskMode: 'Percent of Equity',
@@ -114,15 +114,53 @@ class StrategyEngine extends EventEmitter {
       rrRatio: 1.8, // 1:1.8 R:R
 
       // Trailing / Breakeven
-      enableBE: true, // Enabled
-      beTriggerR: 0.6, // Snap to Breakeven at +0.6R
-      beOffsetAtr: 0.25 // +0.25x ATR Fee Buffer
+      enableBE: true,
+      beTriggerR: 0.6,
+      beOffsetAtr: 0.25
     });
 
-    // Also link demo_001 as fallback
-    this.addStrategy('demo_001', {
-      ...this.getStrategy('demo_f589a3'),
-      name: 'Apex Scalper PRO Auto [demo_001]'
+    // 2. Account 2: (2ND) BTC 15M (Account: demo_4ea4ab)
+    this.addStrategy('demo_4ea4ab', {
+      name: '(2ND) BTC 15M',
+      symbol: 'BTCUSDT',
+      timeframeMs: 15 * 60 * 1000, // 15 Minutes
+      enabled: true,
+
+      // Trend & EMAs
+      fastEmaLen: 32,
+      slowEmaLen: 20,
+      baseEmaLen: 124,
+      slopeLookback: 4,
+      requireSlope: true,
+
+      // RSI Filters
+      rsiLen: 9,
+      rsiBullMin: 30,
+      rsiBullMax: 60,
+      rsiBearMin: 30,
+      rsiBearMax: 40,
+
+      // Session & Day Caps (UTC 06:30 to 18:30)
+      useSessionFilter: true,
+      sessionStartHour: 6,
+      sessionStartMin: 30,
+      sessionEndHour: 18,
+      sessionEndMin: 30,
+      maxDailyTrades: 6,
+      tradeDirection: 'Both',
+
+      // Risk & Position Sizing
+      riskMode: 'Percent of Equity',
+      riskPct: 4.0, // 4% Risk
+      atrLen: 12,
+      slAtrMult: 1.9,
+      minSlDist: 2.0,
+      rrRatio: 2.0, // 1:2.0 R:R
+
+      // Trailing / Breakeven
+      enableBE: true,
+      beTriggerR: 0.5,
+      beOffsetAtr: 0.2
     });
   }
 
@@ -140,7 +178,8 @@ class StrategyEngine extends EventEmitter {
     this.isInitialized = true;
 
     console.log('⚡ Starting 24/7 Autonomous Strategy Engine...');
-    this.bootstrapCandles('XAUUSD');
+    this.bootstrapCandles('XAUUSD', 2915.0);
+    this.bootstrapCandles('BTCUSDT', 78000.0);
 
     // Hook into live real-time price feed
     priceFeed.on('price', ({ symbol, price, timestamp }) => {
@@ -149,17 +188,18 @@ class StrategyEngine extends EventEmitter {
   }
 
   // Generate synthetic / baseline 15m candle history if starting fresh
-  bootstrapCandles(symbol) {
+  bootstrapCandles(symbol, fallbackPrice = 2915.0) {
     const now = Date.now();
-    const currentPrice = priceFeed.getPrice(symbol) || 2915.0;
+    const currentPrice = priceFeed.getPrice(symbol) || fallbackPrice;
     const history = [];
 
-    // Create 150 baseline 15m bars to seed EMAs (120 baseline) and RSI(14)
-    let p = currentPrice - 8.0;
+    // Create 150 baseline 15m bars to seed EMAs (124 baseline) and RSI(14)
+    let p = currentPrice * 0.98;
+    const step = (currentPrice - p) / 150;
     for (let i = 150; i >= 1; i--) {
       const barTime = now - (i * 15 * 60 * 1000);
-      const volatility = 0.5 + Math.random() * 1.5;
-      const change = (Math.random() - 0.49) * 2.0;
+      const volatility = currentPrice * 0.002;
+      const change = step + (Math.random() - 0.48) * volatility;
       p += change;
       history.push({
         open: p,
@@ -176,19 +216,22 @@ class StrategyEngine extends EventEmitter {
 
   // Handle incoming live price ticks and update 15m bar
   handlePriceTick(symbol, price, timestamp = Date.now()) {
-    const sym = symbol.toUpperCase().replace('/', '').replace('.', '').trim();
-    if (sym !== 'XAUUSD' && sym !== 'GOLD' && sym !== 'PAXGUSDT') return;
+    let normSym = symbol.toUpperCase().replace('/', '').replace('.', '').trim();
+    if (normSym === 'GOLD' || normSym === 'PAXGUSDT') normSym = 'XAUUSD';
+    if (normSym === 'BTC' || normSym === 'BTCUSD') normSym = 'BTCUSDT';
 
-    let candles = this.candles15m.get('XAUUSD');
+    if (normSym !== 'XAUUSD' && normSym !== 'BTCUSDT') return;
+
+    let candles = this.candles15m.get(normSym);
     if (!candles) {
-      this.bootstrapCandles('XAUUSD');
-      candles = this.candles15m.get('XAUUSD');
+      this.bootstrapCandles(normSym, price);
+      candles = this.candles15m.get(normSym);
     }
 
     const barDuration = 15 * 60 * 1000;
     const currentBarStart = Math.floor(timestamp / barDuration) * barDuration;
 
-    let currentBar = this.currentBar15m.get('XAUUSD');
+    let currentBar = this.currentBar15m.get(normSym);
 
     if (!currentBar || currentBar.time !== currentBarStart) {
       // Previous bar closed!
@@ -197,7 +240,7 @@ class StrategyEngine extends EventEmitter {
         if (candles.length > 300) candles.shift();
 
         // 🎯 Evaluate strategy triggers on completed candle close!
-        this.evaluateStrategiesOnBarClose('XAUUSD', currentBar);
+        this.evaluateStrategiesOnBarClose(normSym, currentBar);
       }
 
       // Start new forming bar
@@ -208,7 +251,7 @@ class StrategyEngine extends EventEmitter {
         close: price,
         time: currentBarStart
       };
-      this.currentBar15m.set('XAUUSD', currentBar);
+      this.currentBar15m.set(normSym, currentBar);
     } else {
       // Update forming bar extremes
       if (price > currentBar.high) currentBar.high = price;
@@ -217,7 +260,7 @@ class StrategyEngine extends EventEmitter {
     }
 
     // Dynamic Breakeven Snap Check
-    this.checkBreakevenTriggers('XAUUSD', price);
+    this.checkBreakevenTriggers(normSym, price);
   }
 
   // Check and snap Stop Loss to Breakeven when trade reaches +0.6R
