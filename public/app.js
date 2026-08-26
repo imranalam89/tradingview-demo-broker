@@ -34,6 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // Setup account selector change listener
   document.getElementById('account-selector').addEventListener('change', (e) => {
     activeAccountId = e.target.value;
+    const tradeFilter = document.getElementById('trade-filter-account');
+    if (tradeFilter) {
+      tradeFilter.value = activeAccountId;
+    }
     refreshActiveData();
   });
 });
@@ -123,6 +127,9 @@ async function loadAccounts() {
   const res = await api('/api/accounts');
   if (res.success && res.accounts) {
     accounts = res.accounts;
+    if (accounts.length > 0 && !accounts.some(a => a.id === activeAccountId)) {
+      activeAccountId = accounts[0].id;
+    }
     renderAccountSelectors();
     updateKpis();
     loadPositions();
@@ -137,20 +144,34 @@ function renderAccountSelectors() {
   const simSelector = document.getElementById('sim-account');
   const tradeFilter = document.getElementById('trade-filter-account');
 
+  const prevTradeFilter = tradeFilter ? tradeFilter.value : null;
+
   selector.innerHTML = '';
   tvSelector.innerHTML = '';
   simSelector.innerHTML = '';
   
-  // Keep 'all' for trade filter
-  tradeFilter.innerHTML = '<option value="all">All Accounts</option>';
+  if (tradeFilter) {
+    tradeFilter.innerHTML = '<option value="all">All Accounts</option>';
+  }
 
   accounts.forEach(acc => {
-    const opt = `<option value="${acc.id}" ${acc.id === activeAccountId ? 'selected' : ''}>${acc.name} ($${acc.equity.toLocaleString()})</option>`;
+    const isSelected = acc.id === activeAccountId;
+    const opt = `<option value="${acc.id}" ${isSelected ? 'selected' : ''}>${acc.name} ($${acc.equity.toLocaleString()})</option>`;
     selector.innerHTML += opt;
     tvSelector.innerHTML += opt;
     simSelector.innerHTML += opt;
-    tradeFilter.innerHTML += `<option value="${acc.id}">${acc.name}</option>`;
+    if (tradeFilter) {
+      tradeFilter.innerHTML += `<option value="${acc.id}" ${isSelected ? 'selected' : ''}>${acc.name}</option>`;
+    }
   });
+
+  if (tradeFilter) {
+    if (prevTradeFilter && (prevTradeFilter === 'all' || accounts.some(a => a.id === prevTradeFilter))) {
+      tradeFilter.value = prevTradeFilter;
+    } else {
+      tradeFilter.value = activeAccountId;
+    }
+  }
 
   renderManageAccountsList();
   generateTvSnippets();
@@ -484,14 +505,25 @@ function renderComparisonTable(comparison) {
 
 // Load Trade History
 async function loadTradesData() {
-  const accountFilter = document.getElementById('trade-filter-account').value;
-  const outcomeFilter = document.getElementById('trade-filter-outcome').value;
-  const symbolFilter = document.getElementById('trade-filter-symbol').value.trim();
+  const tradeFilterEl = document.getElementById('trade-filter-account');
+  const accountFilter = tradeFilterEl ? tradeFilterEl.value : activeAccountId;
+  const outcomeFilter = document.getElementById('trade-filter-outcome')?.value || 'all';
+  const symbolFilter = document.getElementById('trade-filter-symbol')?.value?.trim() || '';
 
   let url = `/api/trades?limit=100`;
-  if (accountFilter && accountFilter !== 'all') url += `&account_id=${accountFilter}`;
-  if (outcomeFilter && outcomeFilter !== 'all') url += `&outcome=${outcomeFilter}`;
-  if (symbolFilter) url += `&symbol=${symbolFilter}`;
+  if (accountFilter && accountFilter !== 'all') url += `&account_id=${encodeURIComponent(accountFilter)}`;
+  if (outcomeFilter && outcomeFilter !== 'all') url += `&outcome=${encodeURIComponent(outcomeFilter)}`;
+  if (symbolFilter) url += `&symbol=${encodeURIComponent(symbolFilter)}`;
+
+  // Update export button href to match current account filter
+  const exportBtn = document.getElementById('export-csv-btn');
+  if (exportBtn) {
+    let exportUrl = '/api/trades/export';
+    if (accountFilter && accountFilter !== 'all') {
+      exportUrl += `?account_id=${encodeURIComponent(accountFilter)}`;
+    }
+    exportBtn.href = exportUrl;
+  }
 
   const res = await api(url);
   if (res.success && res.trades) {
