@@ -111,12 +111,12 @@ class StrategyEngine extends EventEmitter {
       atrLen: 5,
       slAtrMult: 1.6,
       minSlDist: 2.0,
-      rrRatio: 1.0, // 1:1 R:R
+      rrRatio: 1.8, // 1:1.8 R:R
 
       // Trailing / Breakeven
-      enableBE: false,
-      beTriggerR: 1.0,
-      beOffsetAtr: 0.0
+      enableBE: true, // Enabled
+      beTriggerR: 0.6, // Snap to Breakeven at +0.6R
+      beOffsetAtr: 0.25 // +0.25x ATR Fee Buffer
     });
 
     // Also link demo_001 as fallback
@@ -214,6 +214,46 @@ class StrategyEngine extends EventEmitter {
       if (price > currentBar.high) currentBar.high = price;
       if (price < currentBar.low) currentBar.low = price;
       currentBar.close = price;
+    }
+
+    // Dynamic Breakeven Snap Check
+    this.checkBreakevenTriggers('XAUUSD', price);
+  }
+
+  // Check and snap Stop Loss to Breakeven when trade reaches +0.6R
+  checkBreakevenTriggers(symbol, currentPrice) {
+    for (const [accId, cfg] of this.strategies.entries()) {
+      if (!cfg.enabled || !cfg.enableBE || cfg.symbol !== symbol) continue;
+
+      try {
+        const openPositions = db.prepare('SELECT * FROM positions WHERE account_id = ? AND symbol = ? AND status = \'OPEN\'').all(accId, symbol);
+        for (const pos of openPositions) {
+          const initialRisk = Math.abs(pos.entry_price - (pos.stop_loss || (pos.entry_price - 5.0)));
+          if (initialRisk <= 0) continue;
+
+          const candles = this.candles15m.get(symbol) || [];
+          const atrVal = calculateATR(candles, cfg.atrLen);
+          const buffer = atrVal * (cfg.beOffsetAtr || 0.25);
+
+          if (pos.side === 'BUY') {
+            const triggerPrice = pos.entry_price + (initialRisk * cfg.beTriggerR);
+            if (currentPrice >= triggerPrice && pos.stop_loss < pos.entry_price) {
+              const newSL = parseFloat((pos.entry_price + buffer).toFixed(2));
+              db.prepare('UPDATE positions SET stop_loss = ?, updated_at = ? WHERE id = ?').run(newSL, new Date().toISOString(), pos.id);
+              console.log(`🔒 [BREAKEVEN LOCKED] ${pos.symbol} Long SL moved to $${newSL} (+${cfg.beTriggerR}R reached)`);
+            }
+          } else if (pos.side === 'SELL') {
+            const triggerPrice = pos.entry_price - (initialRisk * cfg.beTriggerR);
+            if (currentPrice <= triggerPrice && pos.stop_loss > pos.entry_price) {
+              const newSL = parseFloat((pos.entry_price - buffer).toFixed(2));
+              db.prepare('UPDATE positions SET stop_loss = ?, updated_at = ? WHERE id = ?').run(newSL, new Date().toISOString(), pos.id);
+              console.log(`🔒 [BREAKEVEN LOCKED] ${pos.symbol} Short SL moved to $${newSL} (+${cfg.beTriggerR}R reached)`);
+            }
+          }
+        }
+      } catch (err) {
+        // Suppress transient query errors during table reload
+      }
     }
   }
 

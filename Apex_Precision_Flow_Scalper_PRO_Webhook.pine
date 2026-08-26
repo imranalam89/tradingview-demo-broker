@@ -18,7 +18,7 @@ strategy("Apex Precision Flow Scalper PRO [5M] (Webhook Automated)",
 // =============================================================================
 grp_wh         = "=== 24/7 Cloud Broker Webhook ==="
 webhook_secret = input.string("antigravity_tv_secret_2026", "Webhook Secret Key", group=grp_wh)
-account_id     = input.string("demo_001", "Target Demo Account ID (e.g. demo_001)", group=grp_wh, tooltip="Matches the Account ID in your Render dashboard")
+account_id     = input.string("demo_f589a3", "Target Demo Account ID (e.g. demo_f589a3)", group=grp_wh, tooltip="Matches the Account ID in your Render dashboard")
 
 // =============================================================================
 // 1. INPUT CONFIGURATION & USER CONTROLS
@@ -28,43 +28,43 @@ account_id     = input.string("demo_001", "Target Demo Account ID (e.g. demo_001
 grp_gen = "=== Strategy & Session Settings ==="
 use_session_filter = input.bool(true, "Enable Session Killzone Filter", group=grp_gen, tooltip="Limits trading to active London and New York liquid market hours")
 session_tz         = input.string("UTC", "Session Timezone", options=["UTC", "America/New_York", "Europe/London", "Asia/Tokyo"], group=grp_gen)
-session_times      = input.session("0630-1830", "Trading Sessions (UTC)", group=grp_gen, tooltip="Covers high-liquidity London + NY hours (06:30 to 18:30 UTC)")
-max_daily_trades   = input.int(4, "Max Daily Trades Cap", minval=1, maxval=10, group=grp_gen, tooltip="Limits strategy to 3-4 trades per calendar day")
+session_times      = input.session("0600-1830", "Trading Sessions (UTC)", group=grp_gen, tooltip="Covers high-liquidity London + NY hours (06:00 to 18:30 UTC)")
+max_daily_trades   = input.int(6, "Max Daily Trades Cap", minval=1, maxval=10, group=grp_gen, tooltip="Limits strategy to 6 trades per calendar day")
 trade_direction    = input.string("Both", "Allowed Trade Direction", options=["Both", "Long Only", "Short Only"], group=grp_gen)
 
 // --- Trend & Market Structure Filters ---
 grp_trend = "=== Trend & Momentum Filters ==="
-ema_fast_len     = input.int(9, "Fast Momentum EMA", minval=1, maxval=50, group=grp_trend)
-ema_slow_len     = input.int(21, "Slow Momentum EMA", minval=5, maxval=100, group=grp_trend)
-ema_baseline_len = input.int(200, "Macro Baseline Trend EMA", minval=50, maxval=500, group=grp_trend)
+ema_fast_len     = input.int(19, "Fast Momentum EMA", minval=1, maxval=50, group=grp_trend)
+ema_slow_len     = input.int(24, "Slow Momentum EMA", minval=5, maxval=100, group=grp_trend)
+ema_baseline_len = input.int(120, "Macro Baseline Trend EMA", minval=50, maxval=500, group=grp_trend)
 use_slope        = input.bool(true, "Require 200 EMA Slope Angle Confirmation", group=grp_trend, tooltip="Filters out sideways chop by requiring the 200 EMA to be sloped")
 slope_bars       = input.int(5, "Slope Lookback Bars", minval=1, maxval=20, group=grp_trend)
 
 // --- Momentum & RSI Filters ---
 grp_mom = "=== RSI Momentum Filters ==="
 rsi_len          = input.int(14, "RSI Length", minval=2, maxval=50, group=grp_mom)
-rsi_bull_min     = input.float(48.0, "Long RSI Minimum Threshold", minval=30.0, maxval=60.0, group=grp_mom)
+rsi_bull_min     = input.float(54.0, "Long RSI Minimum Threshold", minval=30.0, maxval=60.0, group=grp_mom)
 rsi_bull_max     = input.float(72.0, "Long RSI Maximum Threshold (Anti-Top)", minval=60.0, maxval=85.0, group=grp_mom)
-rsi_bear_min     = input.float(28.0, "Short RSI Minimum Threshold (Anti-Bottom)", minval=15.0, maxval=40.0, group=grp_mom)
-rsi_bear_max     = input.float(52.0, "Short RSI Maximum Threshold", minval=40.0, maxval=70.0, group=grp_mom)
+rsi_bear_min     = input.float(30.0, "Short RSI Minimum Threshold (Anti-Bottom)", minval=15.0, maxval=40.0, group=grp_mom)
+rsi_bear_max     = input.float(50.0, "Short RSI Maximum Threshold", minval=40.0, maxval=70.0, group=grp_mom)
 
 // --- Risk Management, Dynamic SL & TP ---
 grp_risk = "=== Risk Management & Exits ==="
 risk_mode        = input.string("Percent of Equity", "Position Sizing Method", options=["Percent of Equity", "Fixed Capital ($)", "Fixed Size / Lots"], group=grp_risk)
-risk_pct         = input.float(1.5, "Risk Per Trade (%)", minval=0.1, maxval=5.0, step=0.1, group=grp_risk, tooltip="Percentage of account equity risked per trade")
+risk_pct         = input.float(2.0, "Risk Per Trade (%)", minval=0.1, maxval=5.0, step=0.1, group=grp_risk, tooltip="Percentage of account equity risked per trade")
 fixed_cash_amt   = input.float(1000.0, "Fixed Position Value ($)", minval=10.0, group=grp_risk)
 fixed_qty_lots   = input.float(1.0, "Fixed Lot/Contract Quantity", minval=0.01, step=0.01, group=grp_risk)
 
-atr_len          = input.int(14, "ATR Length", minval=5, maxval=50, group=grp_risk)
-sl_atr_mult      = input.float(1.5, "Stop Loss (x ATR)", minval=0.5, maxval=4.0, step=0.1, group=grp_risk)
+atr_len          = input.int(5, "ATR Length", minval=5, maxval=50, group=grp_risk)
+sl_atr_mult      = input.float(1.6, "Stop Loss (x ATR)", minval=0.5, maxval=4.0, step=0.1, group=grp_risk)
 min_sl_dist      = input.float(2.0, "Minimum SL Distance ($/Points)", minval=0.5, maxval=20.0, step=0.5, group=grp_risk)
-rr_ratio         = input.float(2.0, "Risk-to-Reward Ratio (1:R)", minval=1.0, maxval=5.0, step=0.1, group=grp_risk)
+rr_ratio         = input.float(1.8, "Risk-to-Reward Ratio (1:R)", minval=1.0, maxval=5.0, step=0.1, group=grp_risk)
 
 // --- Dynamic Breakeven & Trailing ---
 grp_trail = "=== Profit Lock & Trailing ==="
 enable_be        = input.bool(true, "Enable Breakeven Lock", group=grp_trail, tooltip="Moves SL to Breakeven (+ small buffer) once trade reaches target R-Multiple")
-be_trigger_r     = input.float(1.0, "Breakeven Trigger (R-Multiple)", minval=0.5, maxval=2.5, step=0.1, group=grp_trail)
-be_offset_atr    = input.float(0.15, "Breakeven Fee Buffer (x ATR)", minval=0.0, maxval=0.5, step=0.05, group=grp_trail)
+be_trigger_r     = input.float(0.6, "Breakeven Trigger (R-Multiple)", minval=0.5, maxval=2.5, step=0.1, group=grp_trail)
+be_offset_atr    = input.float(0.25, "Breakeven Fee Buffer (x ATR)", minval=0.0, maxval=0.5, step=0.05, group=grp_trail)
 
 // --- UI & Visuals ---
 grp_ui = "=== UI & Visuals ==="
