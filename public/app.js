@@ -151,26 +151,12 @@ function renderAccountSelectors() {
   simSelector.innerHTML = '';
   
   if (tradeFilter) {
-    tradeFilter.innerHTML = '<option value="all">All Accounts</option>';
-  }
-
-  accounts.forEach(acc => {
-    const isSelected = acc.id === activeAccountId;
-    const opt = `<option value="${acc.id}" ${isSelected ? 'selected' : ''}>${acc.name} ($${acc.equity.toLocaleString()})</option>`;
-    selector.innerHTML += opt;
-    tvSelector.innerHTML += opt;
-    simSelector.innerHTML += opt;
-    if (tradeFilter) {
+    tradeFilter.innerHTML = '<option value="all">All Accounts (Combined)</option>';
+    accounts.forEach(acc => {
+      const isSelected = acc.id === activeAccountId;
       tradeFilter.innerHTML += `<option value="${acc.id}" ${isSelected ? 'selected' : ''}>${acc.name}</option>`;
-    }
-  });
-
-  if (tradeFilter) {
-    if (prevTradeFilter && (prevTradeFilter === 'all' || accounts.some(a => a.id === prevTradeFilter))) {
-      tradeFilter.value = prevTradeFilter;
-    } else {
-      tradeFilter.value = activeAccountId;
-    }
+    });
+    tradeFilter.value = activeAccountId;
   }
 
   renderManageAccountsList();
@@ -651,7 +637,13 @@ function switchTab(tabId) {
   }
 
   if (tabId === 'compare') loadAnalyticsData();
-  if (tabId === 'trades') loadTradesData();
+  if (tabId === 'trades') {
+    const tradeFilterEl = document.getElementById('trade-filter-account');
+    if (tradeFilterEl && (tradeFilterEl.value === 'all' || tradeFilterEl.value === '')) {
+      tradeFilterEl.value = activeAccountId;
+    }
+    loadTradesData();
+  }
   if (tabId === 'webhooks') loadWebhookLogs();
 }
 
