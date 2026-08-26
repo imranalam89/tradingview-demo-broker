@@ -1,4 +1,5 @@
 const EventEmitter = require('events');
+const https = require('https');
 const db = require('../db/database');
 const priceFeed = require('./priceFeed');
 const tradingEngine = require('./tradingEngine');
@@ -173,48 +174,68 @@ class StrategyEngine extends EventEmitter {
     return this.strategies.get(accountId);
   }
 
-  start() {
+  async start() {
     if (this.isInitialized) return;
     this.isInitialized = true;
 
-    console.log('⚡ Starting 24/7 Autonomous Strategy Engine...');
-    this.bootstrapCandles('XAUUSD', 2915.0);
-    this.bootstrapCandles('BTCUSDT', 78000.0);
+    console.log('⚡ Starting 24/7 Autonomous Strategy Engine with Real Market Candles...');
 
-    // Hook into live real-time price feed
+    // 1. Synchronize real historical 15m candles from exchanges
+    await Promise.all([
+      this.fetchRealExchangeCandles('XAUUSD', 'PAXGUSDT'),
+      this.fetchRealExchangeCandles('BTCUSDT', 'BTCUSDT')
+    ]);
+
+    // 2. Refresh candles from exchange every 2 minutes to keep historical bars 100% accurate
+    setInterval(async () => {
+      await Promise.all([
+        this.fetchRealExchangeCandles('XAUUSD', 'PAXGUSDT'),
+        this.fetchRealExchangeCandles('BTCUSDT', 'BTCUSDT')
+      ]);
+    }, 2 * 60 * 1000);
+
+    // 3. Hook into live real-time price feed for instant tick execution
     priceFeed.on('price', ({ symbol, price, timestamp }) => {
       this.handlePriceTick(symbol, price, timestamp);
     });
   }
 
-  // Generate synthetic / baseline 15m candle history if starting fresh
-  bootstrapCandles(symbol, fallbackPrice = 2915.0) {
-    const now = Date.now();
-    const currentPrice = priceFeed.getPrice(symbol) || fallbackPrice;
-    const history = [];
-
-    // Create 150 baseline 15m bars to seed EMAs (124 baseline) and RSI(14)
-    let p = currentPrice * 0.98;
-    const step = (currentPrice - p) / 150;
-    for (let i = 150; i >= 1; i--) {
-      const barTime = now - (i * 15 * 60 * 1000);
-      const volatility = currentPrice * 0.002;
-      const change = step + (Math.random() - 0.48) * volatility;
-      p += change;
-      history.push({
-        open: p,
-        high: p + volatility,
-        low: p - volatility,
-        close: p + change * 0.5,
-        time: barTime
+  // Fetch real historical 15m candles from live exchange API
+  fetchRealExchangeCandles(symbol, binancePair) {
+    return new Promise((resolve) => {
+      const url = `https://api.binance.com/api/v3/klines?symbol=${binancePair}&interval=15m&limit=200`;
+      https.get(url, { headers: { 'User-Agent': 'Mozilla/5.0' } }, (res) => {
+        let data = '';
+        res.on('data', chunk => data += chunk);
+        res.on('end', () => {
+          try {
+            const raw = JSON.parse(data);
+            if (Array.isArray(raw) && raw.length > 50) {
+              const candles = raw.map(k => ({
+                time: k[0],
+                open: parseFloat(k[1]),
+                high: parseFloat(k[2]),
+                low: parseFloat(k[3]),
+                close: parseFloat(k[4]),
+                volume: parseFloat(k[5])
+              }));
+              this.candles15m.set(symbol, candles);
+              console.log(`✅ [REAL-MARKET-SYNC] ${symbol} synced with ${candles.length} real 15m bars | Latest Close: $${candles[candles.length - 1].close}`);
+              return resolve(true);
+            }
+          } catch (e) {
+            console.error(`Failed to parse real candles for ${symbol}:`, e.message);
+          }
+          resolve(false);
+        });
+      }).on('error', (err) => {
+        console.error(`Error fetching real candles for ${symbol}:`, err.message);
+        resolve(false);
       });
-    }
-
-    this.candles15m.set(symbol, history);
-    console.log(`📊 Initialized ${history.length} 15-minute bars for ${symbol}`);
+    });
   }
 
-  // Handle incoming live price ticks and update 15m bar
+  // Handle incoming live price ticks and update active forming 15m bar
   handlePriceTick(symbol, price, timestamp = Date.now()) {
     let normSym = symbol.toUpperCase().replace('/', '').replace('.', '').trim();
     if (normSym === 'GOLD' || normSym === 'PAXGUSDT') normSym = 'XAUUSD';
@@ -223,9 +244,8 @@ class StrategyEngine extends EventEmitter {
     if (normSym !== 'XAUUSD' && normSym !== 'BTCUSDT') return;
 
     let candles = this.candles15m.get(normSym);
-    if (!candles) {
-      this.bootstrapCandles(normSym, price);
-      candles = this.candles15m.get(normSym);
+    if (!candles || candles.length === 0) {
+      return;
     }
 
     const barDuration = 15 * 60 * 1000;
