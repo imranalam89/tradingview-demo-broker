@@ -137,27 +137,36 @@ async function loadAccounts() {
   }
 }
 
-// Render Account Switcher Dropdown
 function renderAccountSelectors() {
   const selector = document.getElementById('account-selector');
   const tvSelector = document.getElementById('tv-target-account');
   const simSelector = document.getElementById('sim-account');
   const tradeFilter = document.getElementById('trade-filter-account');
 
-  const prevTradeFilter = tradeFilter ? tradeFilter.value : null;
-
-  selector.innerHTML = '';
-  tvSelector.innerHTML = '';
-  simSelector.innerHTML = '';
-  
-  if (tradeFilter) {
-    tradeFilter.innerHTML = '<option value="all">All Accounts (Combined)</option>';
-    accounts.forEach(acc => {
-      const isSelected = acc.id === activeAccountId;
-      tradeFilter.innerHTML += `<option value="${acc.id}" ${isSelected ? 'selected' : ''}>${acc.name}</option>`;
-    });
-    tradeFilter.value = activeAccountId;
+  if (accounts.length > 0 && !accounts.some(a => a.id === activeAccountId)) {
+    activeAccountId = accounts[0].id;
   }
+
+  if (selector) selector.innerHTML = '';
+  if (tvSelector) tvSelector.innerHTML = '';
+  if (simSelector) simSelector.innerHTML = '';
+  if (tradeFilter) tradeFilter.innerHTML = '<option value="all">All Accounts (Combined)</option>';
+
+  accounts.forEach(acc => {
+    const isSelected = acc.id === activeAccountId;
+    const opt = `<option value="${acc.id}" ${isSelected ? 'selected' : ''}>${acc.name} ($${acc.equity.toLocaleString()})</option>`;
+    if (selector) selector.innerHTML += opt;
+    if (tvSelector) tvSelector.innerHTML += opt;
+    if (simSelector) simSelector.innerHTML += opt;
+    if (tradeFilter) {
+      tradeFilter.innerHTML += `<option value="${acc.id}" ${isSelected ? 'selected' : ''}>${acc.name}</option>`;
+    }
+  });
+
+  if (selector) selector.value = activeAccountId;
+  if (tvSelector) tvSelector.value = activeAccountId;
+  if (simSelector) simSelector.value = activeAccountId;
+  if (tradeFilter) tradeFilter.value = activeAccountId;
 
   renderManageAccountsList();
   generateTvSnippets();
