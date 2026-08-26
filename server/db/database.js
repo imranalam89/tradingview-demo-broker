@@ -121,14 +121,22 @@ function initSchema() {
     DELETE FROM accounts WHERE id IN ('demo_001', 'demo_002', 'demo_003', 'demo_004');
   `);
 
-  // Ensure XAU 15M IND2 is always guaranteed to exist as the primary account
+  // Ensure Permanent Accounts are always guaranteed to exist in database
   const now = new Date().toISOString();
+  
+  // 1. Account 1: XAU 15M IND2 (Gold)
   db.prepare(`
     INSERT OR IGNORE INTO accounts (id, name, initial_balance, balance, currency, leverage, fee_rate, slippage_rate, spread_rate, assigned_strategy, created_at, updated_at)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run('demo_f589a3', 'XAU 15M IND2', 10000.0, 10000.0, 'USD', 20.0, 0.0004, 0.0002, 0.0001, 'Apex Scalper PRO Auto [XAU 15M]', now, now);
 
-  console.log('✅ Active demo account: XAU 15M IND2 (demo_f589a3)');
+  // 2. Account 2: (2ND) BTC 15M (Bitcoin)
+  db.prepare(`
+    INSERT OR IGNORE INTO accounts (id, name, initial_balance, balance, currency, leverage, fee_rate, slippage_rate, spread_rate, assigned_strategy, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run('demo_4ea4ab', '(2ND) BTC 15M', 10000.0, 10000.0, 'USD', 10.0, 0.0004, 0.0002, 0.0001, 'BTC 15M Strategy', now, now);
+
+  console.log('✅ Active demo accounts: XAU 15M IND2 (demo_f589a3), (2ND) BTC 15M (demo_4ea4ab)');
 }
 
 initSchema();
