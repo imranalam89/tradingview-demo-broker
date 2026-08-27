@@ -177,22 +177,23 @@ class StrategyEngine extends EventEmitter {
   async start() {
     if (this.isInitialized) return;
     this.isInitialized = true;
+    this.lastEvaluatedBarTime = new Map(); // symbol -> last candle timestamp evaluated
 
     console.log('⚡ Starting 24/7 Autonomous Strategy Engine with Real Market Candles...');
 
-    // 1. Synchronize real historical 15m candles from exchanges
+    // 1. Synchronize real historical 15m candles from exchanges immediately
     await Promise.all([
       this.fetchRealExchangeCandles('XAUUSD', 'PAXGUSDT'),
       this.fetchRealExchangeCandles('BTCUSDT', 'BTCUSDT')
     ]);
 
-    // 2. Refresh candles from exchange every 2 minutes to keep historical bars 100% accurate
+    // 2. High-Frequency Real Candle Sync every 30 seconds
     setInterval(async () => {
       await Promise.all([
         this.fetchRealExchangeCandles('XAUUSD', 'PAXGUSDT'),
         this.fetchRealExchangeCandles('BTCUSDT', 'BTCUSDT')
       ]);
-    }, 2 * 60 * 1000);
+    }, 30 * 1000);
 
     // 3. Hook into live real-time price feed for instant tick execution
     priceFeed.on('price', ({ symbol, price, timestamp }) => {
@@ -220,7 +221,17 @@ class StrategyEngine extends EventEmitter {
                 volume: parseFloat(k[5])
               }));
               this.candles15m.set(symbol, candles);
-              console.log(`✅ [REAL-MARKET-SYNC] ${symbol} synced with ${candles.length} real 15m bars | Latest Close: $${candles[candles.length - 1].close}`);
+
+              // 🎯 Check if the last completed candle has been evaluated
+              const completedCandle = candles[candles.length - 2]; // Previous completed 15m bar
+              if (completedCandle) {
+                const lastEval = this.lastEvaluatedBarTime.get(symbol);
+                if (lastEval !== completedCandle.time) {
+                  this.lastEvaluatedBarTime.set(symbol, completedCandle.time);
+                  this.evaluateStrategiesOnBarClose(symbol, completedCandle);
+                }
+              }
+
               return resolve(true);
             }
           } catch (e) {
