@@ -204,7 +204,7 @@ class StrategyEngine extends EventEmitter {
   // Fetch real historical 15m candles from live exchange API
   fetchRealExchangeCandles(symbol, binancePair) {
     return new Promise((resolve) => {
-      const url = `https://api.binance.com/api/v3/klines?symbol=${binancePair}&interval=15m&limit=200`;
+      const url = `https://api.binance.com/api/v3/klines?symbol=${binancePair}&interval=15m&limit=500`;
       https.get(url, { headers: { 'User-Agent': 'Mozilla/5.0' } }, (res) => {
         let data = '';
         res.on('data', chunk => data += chunk);
