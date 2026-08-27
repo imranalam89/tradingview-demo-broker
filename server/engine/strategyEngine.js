@@ -360,10 +360,10 @@ class StrategyEngine extends EventEmitter {
       const dailyCount = this.dailyTradeCounts.get(dayKey) || 0;
       if (dailyCount >= cfg.maxDailyTrades) continue;
 
-      // 4. Session Timezone Filter (06:00 to 18:30 UTC)
+      // 4. Session Timezone Filter (06:00 to 18:30 UTC based on candle bar timestamp)
       if (cfg.useSessionFilter) {
-        const nowUTC = new Date();
-        const curMinutes = nowUTC.getUTCHours() * 60 + nowUTC.getUTCMinutes();
+        const candleDate = new Date(closedBar.time);
+        const curMinutes = candleDate.getUTCHours() * 60 + candleDate.getUTCMinutes();
         const startMinutes = cfg.sessionStartHour * 60 + cfg.sessionStartMin;
         const endMinutes = cfg.sessionEndHour * 60 + cfg.sessionEndMin;
 
@@ -373,11 +373,11 @@ class StrategyEngine extends EventEmitter {
       }
 
       // 5. Technical Indicators
-      const emaFast = calculateEMA(closes, cfg.fastEmaLen); // EMA 19
-      const emaSlow = calculateEMA(closes, cfg.slowEmaLen); // EMA 24
-      const emaBase = calculateEMA(closes, cfg.baseEmaLen); // EMA 120
-      const rsiVal = calculateRSI(closes, cfg.rsiLen);      // RSI 14
-      const atrVal = calculateATR(candles, cfg.atrLen);     // ATR 5
+      const emaFast = calculateEMA(closes, cfg.fastEmaLen); // Fast EMA
+      const emaSlow = calculateEMA(closes, cfg.slowEmaLen); // Slow EMA
+      const emaBase = calculateEMA(closes, cfg.baseEmaLen); // Macro Baseline EMA
+      const rsiVal = calculateRSI(closes, cfg.rsiLen);      // RSI
+      const atrVal = calculateATR(candles, cfg.atrLen);     // ATR
 
       // Macro Trend Slope
       const slopeLookback = cfg.slopeLookback || 5;
@@ -397,6 +397,8 @@ class StrategyEngine extends EventEmitter {
 
       const longCondition = bullTrend && longCross && (rsiVal >= cfg.rsiBullMin && rsiVal <= cfg.rsiBullMax) && (cfg.tradeDirection === 'Both' || cfg.tradeDirection === 'Long Only');
       const shortCondition = bearTrend && shortCross && (rsiVal <= cfg.rsiBearMax && rsiVal >= cfg.rsiBearMin) && (cfg.tradeDirection === 'Both' || cfg.tradeDirection === 'Short Only');
+
+      console.log(`⏱️ [15M EVAL] ${cfg.name} | Close: $${close} | RSI: ${rsiVal.toFixed(1)} | BullTrend: ${bullTrend} | BearTrend: ${bearTrend} | LongCond: ${longCondition} | ShortCond: ${shortCondition}`);
 
       // 6. Execute Long Entry
       if (longCondition) {
