@@ -1,4 +1,5 @@
 const express = require('express');
+const crypto = require('crypto');
 const router = express.Router();
 const db = require('../db/database');
 
@@ -155,6 +156,79 @@ router.get('/export', (req, res) => {
     res.setHeader('Content-Type', 'text/csv');
     res.setHeader('Content-Disposition', `attachment; filename=trade_history_${Date.now()}.csv`);
     res.send(csvContent);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/trades/record - Record a completed trade
+router.post('/record', (req, res) => {
+  try {
+    const {
+      account_id,
+      symbol,
+      side,
+      quantity,
+      entry_price,
+      exit_price,
+      stop_loss,
+      take_profit,
+      exit_reason = 'TP_HIT',
+      fees = 0.0,
+      strategy = '',
+      opened_at,
+      closed_at = new Date().toISOString()
+    } = req.body;
+
+    const account = db.prepare('SELECT * FROM accounts WHERE id = ?').get(account_id);
+    if (!account) return res.status(404).json({ success: false, error: 'Account not found' });
+
+    const posId = 'pos_' + crypto.randomUUID().slice(0, 8);
+    const tradeId = 'tr_' + crypto.randomUUID().slice(0, 8);
+
+    const priceDiff = side.toUpperCase() === 'BUY' ? (exit_price - entry_price) : (entry_price - exit_price);
+    const grossPnl = priceDiff * quantity;
+    const netPnl = grossPnl - fees;
+    const pnlPercent = entry_price > 0 ? (grossPnl / (entry_price * quantity)) * 100 : 0;
+
+    // Insert trade
+    db.prepare(`
+      INSERT INTO trades (id, account_id, position_id, symbol, side, quantity, entry_price, exit_price, stop_loss, take_profit, exit_reason, gross_pnl, fees, net_pnl, pnl_percent, strategy, signal_time, execution_time, closed_at, duration_seconds)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(
+      tradeId,
+      account_id,
+      posId,
+      symbol.toUpperCase(),
+      side.toUpperCase(),
+      quantity,
+      entry_price,
+      exit_price,
+      stop_loss,
+      take_profit,
+      exit_reason,
+      parseFloat(grossPnl.toFixed(2)),
+      parseFloat(fees.toFixed(2)),
+      parseFloat(netPnl.toFixed(2)),
+      parseFloat(pnlPercent.toFixed(2)),
+      strategy || account.assigned_strategy,
+      opened_at || closed_at,
+      opened_at || closed_at,
+      closed_at,
+      3600
+    );
+
+    // Update account balance
+    const newBalance = parseFloat((account.balance + netPnl).toFixed(2));
+    db.prepare('UPDATE accounts SET balance = ?, updated_at = ? WHERE id = ?').run(newBalance, closed_at, account_id);
+
+    // Record equity snapshot
+    db.prepare(`
+      INSERT INTO equity_snapshots (account_id, balance, equity, unrealized_pnl, open_positions_count, created_at)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `).run(account_id, newBalance, newBalance, 0, 0, closed_at);
+
+    res.json({ success: true, message: 'Trade recorded successfully', tradeId, newBalance });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
